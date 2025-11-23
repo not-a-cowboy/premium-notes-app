@@ -7,7 +7,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 
 export function Home() {
-    const { notes, addNote, deleteNote } = useNotes();
+    const { notes, addNote, deleteNote, reorderNotes } = useNotes();
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedNote, setSelectedNote] = useState(null);
     const navigate = useNavigate();
@@ -49,7 +49,7 @@ export function Home() {
             </header>
 
             <main className="max-w-7xl mx-auto pb-24">
-                <NoteGrid notes={notes} onDelete={deleteNote} onNoteClick={handleNoteClick} />
+                <NoteGrid notes={notes} onDelete={deleteNote} onNoteClick={handleNoteClick} onReorder={reorderNotes} />
             </main>
 
             <AddNoteButton onClick={() => navigate('/new')} />

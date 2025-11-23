@@ -28,5 +28,10 @@ export function useNotes() {
         setNotes(prev => prev.map(note => note.id === id ? { ...note, ...updatedFields } : note));
     };
 
-    return { notes, addNote, deleteNote, updateNote };
+    const reorderNotes = (newOrder) => {
+        setNotes(newOrder);
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(newOrder));
+    };
+
+    return { notes, addNote, deleteNote, updateNote, reorderNotes };
 }
