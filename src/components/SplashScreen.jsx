@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import logo from '../assets/logo.svg';
+import logo from '../assets/logo.png';
 
 export function SplashScreen({ onComplete }) {
     return (
@@ -12,8 +12,8 @@ export function SplashScreen({ onComplete }) {
         >
             <motion.img
                 src={logo}
-                alt="Logo"
-                className="w-24 h-24 mb-4"
+                alt="Jot It Down Logo"
+                className="w-32 h-32 mb-4"
                 initial={{ scale: 0.8, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
                 transition={{ duration: 0.8, ease: "easeOut" }}
@@ -24,7 +24,7 @@ export function SplashScreen({ onComplete }) {
                 animate={{ y: 0, opacity: 1 }}
                 transition={{ duration: 0.8, delay: 0.3, ease: "easeOut" }}
             >
-                Premium Notes
+                Jot It Down
             </motion.h1>
         </motion.div>
     );
