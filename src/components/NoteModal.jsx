@@ -53,7 +53,7 @@ export function NoteModal({ isOpen, onClose, onSave, note }) {
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.9, y: 20 }}
                 transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                className="relative w-full max-w-lg bg-white rounded-2xl shadow-lifted p-6 md:p-8 z-10"
+                className="relative w-full max-w-lg bg-white/60 backdrop-blur-md rounded-2xl shadow-2xl p-6 md:p-8 z-10 border border-white/50"
             >
                 <div className="absolute top-4 right-4 flex items-center gap-2">
                     <button

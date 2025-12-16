@@ -4,6 +4,10 @@
 
 @layer base {
   body {
-    @apply bg-background text-text font-sans antialiased;
+    @apply bg-background text-text font-sans antialiased overflow-x-hidden;
+    background: linear-gradient(-45deg, #FFB6C1, #E6E6FA, #FFDAB9, #E0FFFF);
+    background-size: 400% 400%;
+    animation: gradient-xy 15s ease infinite;
+    min-height: 100vh;
   }
 }
