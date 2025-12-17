@@ -7,12 +7,21 @@ export default {
   theme: {
     extend: {
       colors: {
-        background: '#F0F0F3', // Light gray for neumorphism base
-        text: '#1D1D1F',
-        'gta-pink': '#FFB6C1', // Light Pink
-        'gta-purple': '#E6E6FA', // Lavender
-        'gta-orange': '#FFDAB9', // Peach Puff
-        'gta-teal': '#E0FFFF', // Light Cyan
+        background: 'var(--bg-primary)',
+        'primary': 'var(--text-primary)',
+        'text-secondary': 'var(--text-secondary)',
+        'text-muted': 'var(--text-muted)',
+        'card-bg': 'var(--card-bg)',
+        'card-border': 'var(--card-border)',
+        'sidebar-bg': 'var(--sidebar-bg)',
+        'accent-primary': 'var(--accent-primary)',
+        'accent-secondary': 'var(--accent-secondary)',
+
+        // Retain legacy for gradient stops in default theme if needed, or map them
+        'gta-pink': '#FFB6C1',
+        'gta-purple': '#E6E6FA',
+        'gta-orange': '#FFDAB9',
+        'gta-teal': '#E0FFFF',
       },
       fontFamily: {
         sans: ['Inter', 'sans-serif'],

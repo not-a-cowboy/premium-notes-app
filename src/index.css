@@ -3,11 +3,105 @@
 @tailwind utilities;
 
 @layer base {
+
+  /* Selection & Scrollbar Styling Defaults */
+  ::selection {
+    background-color: var(--accent-secondary);
+    color: var(--text-primary);
+  }
+
+  ::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: var(--text-muted);
+    border-radius: 4px;
+    opacity: 0.5;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--text-secondary);
+  }
+
+  :root {
+    /* Default Theme (Pastel Glass) */
+    --bg-primary: linear-gradient(-45deg, #FFB6C1, #E6E6FA, #FFDAB9, #E0FFFF);
+    --text-primary: #1D1D1F;
+    --text-secondary: #4B5563;
+    --text-muted: #9CA3AF;
+    --card-bg: rgba(255, 255, 255, 0.6);
+    --card-border: rgba(255, 255, 255, 0.5);
+    --sidebar-bg: rgba(255, 255, 255, 0.3);
+    --accent-primary: #E6E6FA;
+    /* gta-purple */
+    --accent-secondary: #FFB6C1;
+    /* gta-pink */
+  }
+
+  .theme-midnight {
+
+    /* Midnight styling overrides */
+    ::selection {
+      background-color: var(--accent-primary);
+      /* Indigo selection */
+      color: white;
+    }
+
+    /* Midnight Theme (Neon/Dark) */
+    --bg-primary: linear-gradient(135deg, #0F172A, #1E1B4B, #312E81);
+    --text-primary: #F8FAFC;
+    --text-secondary: #CBD5E1;
+    --text-muted: #64748B;
+    --card-bg: rgba(30, 41, 59, 0.7);
+    --card-border: rgba(148, 163, 184, 0.2);
+    --sidebar-bg: rgba(15, 23, 42, 0.6);
+    --accent-primary: #818CF8;
+    /* Indigo-400 */
+    --accent-secondary: #F472B6;
+    /* Pink-400 */
+  }
+
+  .theme-soft-paper {
+
+    /* Paper styling overrides */
+    ::selection {
+      background-color: #D6D3D1;
+      /* Stone selection */
+      color: #292524;
+    }
+
+    /* Soft Paper Theme (Warm/Classic) */
+    --bg-primary: #FDFBF7;
+    /* Warm off-white */
+    --text-primary: #292524;
+    /* Stone-800 */
+    --text-secondary: #57534E;
+    /* Stone-600 */
+    --text-muted: #A8A29E;
+    --card-bg: #FFFFFF;
+    --card-border: #E7E5E4;
+    /* Stone-200 */
+    --sidebar-bg: #F5F5F4;
+    /* Stone-100 */
+    --accent-primary: #D6D3D1;
+    /* Stone-300 */
+    --accent-secondary: #E7E5E4;
+  }
+
   body {
-    @apply bg-background text-text font-sans antialiased overflow-x-hidden;
-    background: linear-gradient(-45deg, #FFB6C1, #E6E6FA, #FFDAB9, #E0FFFF);
+    @apply text-primary font-sans antialiased overflow-x-hidden transition-colors duration-500;
+    background: var(--bg-primary);
     background-size: 400% 400%;
-    animation: gradient-xy 15s ease infinite;
     min-height: 100vh;
+  }
+
+  /* Only animate gradient if it is a gradient (heuristically check or just leave it, single colors won't animate effectively but harmless) */
+  body:not(.theme-soft-paper) {
+    animation: gradient-xy 15s ease infinite;
   }
 }

@@ -1,9 +1,18 @@
 import { motion, AnimatePresence } from 'framer-motion';
-import { Type, List, Image, AlignLeft, AlignCenter, AlignRight, Pencil, Upload } from 'lucide-react';
+import { Type, AlignLeft, AlignCenter, AlignRight, Palette, X, List, Image, Upload } from 'lucide-react';
+import { useTheme } from '../context/ThemeContext';
 import { useRef } from 'react';
+import { ThemePicker } from './ThemePicker';
 
 export function Sidebar({ isCollapsed, setIsCollapsed, fontFamily, setFontFamily, textAlign, setTextAlign, onInsertText }) {
     const fileInputRef = useRef(null);
+    const { theme, setTheme } = useTheme();
+
+    const themes = [
+        { id: 'default', name: 'Default', color: 'linear-gradient(135deg, #FFB6C1, #E0FFFF)' },
+        { id: 'midnight', name: 'Midnight', color: '#1E1B4B' },
+        { id: 'soft-paper', name: 'Paper', color: '#F5F5F4' }
+    ];
 
     const handleFileUpload = (e) => {
         const file = e.target.files[0];
@@ -29,7 +38,7 @@ export function Sidebar({ isCollapsed, setIsCollapsed, fontFamily, setFontFamily
                     onClick={() => setIsCollapsed(false)}
                     className="fixed right-8 top-24 w-12 h-12 bg-white/60 backdrop-blur-md rounded-full shadow-lg border border-white/50 flex items-center justify-center text-gray-700 z-50"
                 >
-                    <Pencil size={20} />
+                    <X size={20} />
                 </motion.button>
             ) : (
                 <motion.div
@@ -52,19 +61,19 @@ export function Sidebar({ isCollapsed, setIsCollapsed, fontFamily, setFontFamily
                             <div className="grid grid-cols-3 gap-2">
                                 <button
                                     onClick={() => setFontFamily('sans')}
-                                    className={`p-2 rounded-lg text-sm border transition-all ${fontFamily === 'sans' ? 'bg-gta-purple text-white border-transparent' : 'bg-white/40 border-white/50 hover:bg-white/60'}`}
+                                    className={`p - 2 rounded - lg text - sm border transition - all ${fontFamily === 'sans' ? 'bg-gta-purple text-white border-transparent' : 'bg-white/40 border-white/50 hover:bg-white/60'} `}
                                 >
                                     Sans
                                 </button>
                                 <button
                                     onClick={() => setFontFamily('serif')}
-                                    className={`p-2 rounded-lg text-sm border font-serif transition-all ${fontFamily === 'serif' ? 'bg-gta-purple text-white border-transparent' : 'bg-white/40 border-white/50 hover:bg-white/60'}`}
+                                    className={`p - 2 rounded - lg text - sm border font - serif transition - all ${fontFamily === 'serif' ? 'bg-gta-purple text-white border-transparent' : 'bg-white/40 border-white/50 hover:bg-white/60'} `}
                                 >
                                     Serif
                                 </button>
                                 <button
                                     onClick={() => setFontFamily('mono')}
-                                    className={`p-2 rounded-lg text-sm border font-mono transition-all ${fontFamily === 'mono' ? 'bg-gta-purple text-white border-transparent' : 'bg-white/40 border-white/50 hover:bg-white/60'}`}
+                                    className={`p - 2 rounded - lg text - sm border font - mono transition - all ${fontFamily === 'mono' ? 'bg-gta-purple text-white border-transparent' : 'bg-white/40 border-white/50 hover:bg-white/60'} `}
                                 >
                                     Mono
                                 </button>
@@ -73,38 +82,35 @@ export function Sidebar({ isCollapsed, setIsCollapsed, fontFamily, setFontFamily
 
                         {/* Alignment */}
                         <div className="space-y-2">
-                            <div className="flex items-center gap-2 text-gray-700 font-medium">
-                                <AlignLeft size={18} />
-                                <span>Alignment</span>
+                            <h3 className="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-4">Alignment</h3>
+                            <div className="flex bg-gray-100 p-1 rounded-lg">
+                                {['left', 'center', 'right'].map((align) => (
+                                    <button
+                                        key={align}
+                                        onClick={() => setTextAlign(align)}
+                                        className={`flex - 1 p - 2 rounded - md flex justify - center transition - all ${textAlign === align ? 'bg-white shadow-sm text-gta-purple' : 'text-gray-400 hover:text-gray-600'} `}
+                                    >
+                                        {align === 'left' && <AlignLeft size={20} />}
+                                        {align === 'center' && <AlignCenter size={20} />}
+                                        {align === 'right' && <AlignRight size={20} />}
+                                    </button>
+                                ))}
                             </div>
-                            <div className="flex gap-2 bg-white/40 p-1 rounded-xl border border-white/50">
-                                <button
-                                    onClick={() => setTextAlign('left')}
-                                    className={`flex-1 p-2 rounded-lg flex items-center justify-center transition-all ${textAlign === 'left' ? 'bg-white shadow-sm text-gta-purple' : 'text-gray-500 hover:text-gray-700'}`}
-                                >
-                                    <AlignLeft size={18} />
-                                </button>
-                                <button
-                                    onClick={() => setTextAlign('center')}
-                                    className={`flex-1 p-2 rounded-lg flex items-center justify-center transition-all ${textAlign === 'center' ? 'bg-white shadow-sm text-gta-purple' : 'text-gray-500 hover:text-gray-700'}`}
-                                >
-                                    <AlignCenter size={18} />
-                                </button>
-                                <button
-                                    onClick={() => setTextAlign('right')}
-                                    className={`flex-1 p-2 rounded-lg flex items-center justify-center transition-all ${textAlign === 'right' ? 'bg-white shadow-sm text-gta-purple' : 'text-gray-500 hover:text-gray-700'}`}
-                                >
-                                    <AlignRight size={18} />
-                                </button>
-                            </div>
+                        </div>
+
+
+
+                        {/* Theme Picker */}
+                        <div className="mb-8">
+                            <h3 className="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-4 flex items-center gap-2">
+                                <Palette size={14} /> Theme
+                            </h3>
+                            <ThemePicker />
                         </div>
 
                         {/* Lists */}
                         <div className="space-y-2">
-                            <div className="flex items-center gap-2 text-gray-700 font-medium">
-                                <List size={18} />
-                                <span>Lists</span>
-                            </div>
+                            <h3 className="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-4">Insert</h3>
                             <button
                                 onClick={() => onInsertText('\n• ')}
                                 className="w-full p-3 rounded-xl bg-white/40 border border-white/50 hover:bg-white/60 transition-all text-left flex items-center gap-2 text-gray-700"

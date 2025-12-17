@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { X, Trash2, Check } from 'lucide-react';
+import { X, Trash2, Check, Pin } from 'lucide-react';
 
-export function NoteCard({ note, onDelete, onClick }) {
+export function NoteCard({ note, onDelete, onTogglePin, onClick }) {
     const [isDeleting, setIsDeleting] = useState(false);
 
     const handleDelete = (e) => {
@@ -13,6 +13,11 @@ export function NoteCard({ note, onDelete, onClick }) {
             setIsDeleting(true);
             setTimeout(() => setIsDeleting(false), 3000); // Reset after 3s
         }
+    };
+
+    const handlePin = (e) => {
+        e.stopPropagation();
+        onTogglePin(note.id);
     };
 
     return (
@@ -29,8 +34,18 @@ export function NoteCard({ note, onDelete, onClick }) {
                     : 'opacity-0 group-hover:opacity-100 text-gray-400 hover:text-red-500 hover:bg-red-50'
                     }`}
             >
-                {isDeleting ? <Check size={14} /> : <X size={18} />}
+                {isDeleting ? <Check size={14} /> : <Trash2 size={18} />}
                 {isDeleting && <span className="text-xs font-bold">Confirm</span>}
+            </button>
+
+            <button
+                onClick={handlePin}
+                className={`absolute top-4 right-14 transition-all duration-300 p-1 rounded-full ${note.isPinned
+                    ? 'opacity-100 text-gta-purple bg-purple-50'
+                    : 'opacity-0 group-hover:opacity-100 text-gray-400 hover:text-gta-purple hover:bg-purple-50'
+                    }`}
+            >
+                <Pin size={18} className={note.isPinned ? "fill-current" : ""} />
             </button>
             <h3 className="text-xl font-bold mb-2 text-gray-900">{note.title}</h3>
             <p className="text-gray-600 flex-grow whitespace-pre-wrap">{note.content}</p>
