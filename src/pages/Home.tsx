@@ -3,14 +3,13 @@ import { useNotes } from '../hooks/useNotes';
 import { NoteGrid } from '../components/NoteGrid';
 import { AddNoteButton } from '../components/AddNoteButton';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useNavigate } from 'react-router-dom';
-import { Settings, X } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
+import { Settings, X, LayoutDashboard, Share2 } from 'lucide-react';
 import { ThemePicker } from '../components/ThemePicker';
+import { CloudSyncPanel } from '../components/CloudSyncPanel';
 
 export function Home() {
-    const { notes, isLoading, addNote, deleteNote, reorderNotes, togglePin } = useNotes();
-    const [isModalOpen, setIsModalOpen] = useState(false);
-    const [selectedNote, setSelectedNote] = useState(null);
+    const { notes, isLoading, deleteNote, togglePin } = useNotes();
     const navigate = useNavigate();
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedCategory, setSelectedCategory] = useState('All');
@@ -34,12 +33,12 @@ export function Home() {
     }).sort((a, b) => {
         // Sort by Pinned (true first), then by Date (newest first)
         if (a.isPinned === b.isPinned) {
-            return new Date(b.updatedAt || b.date) - new Date(a.updatedAt || a.date);
+            return new Date(b.updatedAt || b.date!).getTime() - new Date(a.updatedAt || a.date!).getTime();
         }
         return a.isPinned ? -1 : 1;
     });
 
-    const handleNoteClick = (note) => {
+    const handleNoteClick = (note: import('../types').Note) => {
         navigate(`/note/${note.id}`);
     };
 
@@ -105,13 +104,58 @@ export function Home() {
                                         <X size={20} />
                                     </button>
                                 </div>
-                                <ThemePicker />
+                                <div className="flex gap-3 mb-4">
+                                    <Link
+                                        to="/board"
+                                        className="p-3 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl hover:shadow-md transition-all flex items-center gap-2 text-gray-700 dark:text-gray-300 font-medium flex-1 justify-center"
+                                        onClick={() => setIsSettingsOpen(false)}
+                                    >
+                                        <LayoutDashboard size={20} />
+                                        <span>Board View</span>
+                                    </Link>
+                                    <Link
+                                        to="/graph"
+                                        className="p-3 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl hover:shadow-md transition-all flex items-center gap-2 text-gray-700 dark:text-gray-300 font-medium flex-1 justify-center"
+                                        onClick={() => setIsSettingsOpen(false)}
+                                    >
+                                        <Share2 size={20} />
+                                        <span>Graph View</span>
+                                    </Link>
+                                </div>
+
+                                <div className="mb-6">
+                                    <CloudSyncPanel />
+                                </div>
+
+                                <div className="flex gap-3 mb-4">
+                                    <ThemePicker />
+                                </div>
+
+                                <div className="mb-4">
+                                    <Link
+                                        to="/login"
+                                        className="w-full p-3 bg-gray-900 text-white rounded-xl hover:bg-gray-800 transition-all flex items-center justify-center gap-2 font-medium"
+                                        onClick={() => setIsSettingsOpen(false)}
+                                    >
+                                        <span>Sign In / Sync</span>
+                                    </Link>
+                                </div>
+
+                                <div className="mt-4 pt-6 border-t border-gray-200">
+                                    <h3 className="text-sm font-bold text-gray-800 mb-2">AI Assistance (Gemini)</h3>
+                                    <p className="text-xs text-gray-500 mb-2">Enter your Google Gemini API Key to enable AI features.</p>
+                                    <input
+                                        type="password"
+                                        placeholder="AIza..."
+                                        className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-gta-purple"
+                                        onChange={(e) => localStorage.setItem('premium-notes-ai-key', e.target.value)}
+                                        defaultValue={localStorage.getItem('premium-notes-ai-key') || ''}
+                                    />
+                                </div>
                             </motion.div>
                         </div>
                     )}
                 </AnimatePresence>
-
-                {/* Category Filter Chips */}
 
                 {/* Category Filter Chips */}
                 <motion.div
@@ -136,10 +180,10 @@ export function Home() {
             </header>
 
             <main className="max-w-7xl mx-auto pb-24">
-                <NoteGrid notes={filteredNotes} onDelete={deleteNote} onNoteClick={handleNoteClick} onReorder={reorderNotes} onTogglePin={togglePin} />
+                <NoteGrid notes={filteredNotes} onDeleteNote={deleteNote} onNoteClick={handleNoteClick} onTogglePin={togglePin} />
             </main>
 
             <AddNoteButton onClick={() => navigate('/new')} />
-        </div>
+        </div >
     );
 }

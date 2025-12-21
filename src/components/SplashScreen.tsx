@@ -1,13 +1,18 @@
 import { motion } from 'framer-motion';
 import logo from '../assets/new_icon.png';
 
-export function SplashScreen({ onComplete }) {
+interface SplashScreenProps {
+    onComplete: () => void;
+}
+
+export function SplashScreen({ onComplete }: SplashScreenProps) {
     return (
         <motion.div
             className="fixed inset-0 z-50 flex flex-col items-center justify-center"
             style={{
-                background: 'linear-gradient(-45deg, #FFB6C1, #E6E6FA, #FFDAB9, #E0FFFF)',
+                background: 'var(--bg-primary)',
                 backgroundSize: '400% 400%',
+                // Keep animation only if keyframes are globally defined and desired
                 animation: 'gradient-xy 15s ease infinite'
             }}
             initial={{ opacity: 1 }}
@@ -38,7 +43,8 @@ export function SplashScreen({ onComplete }) {
             </motion.div>
 
             <motion.h1
-                className="text-4xl font-bold text-white mt-8 tracking-tight drop-shadow-lg"
+                className="text-4xl font-bold mt-8 tracking-tight drop-shadow-lg"
+                style={{ color: 'var(--text-primary)' }}
                 initial={{ y: 20, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
                 transition={{ duration: 0.8, delay: 0.5, ease: "easeOut" }}

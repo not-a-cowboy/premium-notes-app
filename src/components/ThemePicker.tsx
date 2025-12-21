@@ -1,12 +1,12 @@
 import { useTheme } from '../context/ThemeContext';
-import { motion } from 'framer-motion';
 import { Check } from 'lucide-react';
 
 export function ThemePicker({ compact = false }) {
     const { theme, setTheme } = useTheme();
 
-    const themes = [
-        { id: 'default', name: 'Sakura', emoji: '🌸', color: 'linear-gradient(135deg, #FFB6C1, #E0FFFF)' },
+    const themes: { id: import('../types').Theme; name: string; emoji: string; color: string }[] = [
+        { id: 'default', name: 'Neutral', emoji: '🏳️', color: '#f3f4f6' },
+        { id: 'sakura', name: 'Sakura', emoji: '🌸', color: 'linear-gradient(135deg, #FFB6C1, #E0FFFF)' },
         { id: 'midnight', name: 'Midnight', emoji: '🌌', color: '#1E1B4B' },
         { id: 'soft-paper', name: 'Journal', emoji: '📜', color: '#F5F5F4' },
     ];

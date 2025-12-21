@@ -1,7 +1,11 @@
-import { Plus } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { Plus } from 'lucide-react';
 
-export function AddNoteButton({ onClick }) {
+interface AddNoteButtonProps {
+    onClick: () => void;
+}
+
+export function AddNoteButton({ onClick }: AddNoteButtonProps) {
     return (
         <motion.button
             onClick={onClick}

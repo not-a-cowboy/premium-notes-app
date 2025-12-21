@@ -29,7 +29,28 @@
   }
 
   :root {
-    /* Default Theme (Pastel Glass) */
+    /* Default Theme (Neutral / Premium) */
+    --bg-primary: #ffffff;
+    /* Clean white for a modern feel */
+    --text-primary: #1f2937;
+    /* Gray-800 */
+    --text-secondary: #4b5563;
+    /* Gray-600 */
+    --text-muted: #9ca3af;
+    /* Gray-400 */
+    --card-bg: rgba(255, 255, 255, 0.8);
+    --card-border: rgba(229, 231, 235, 0.5);
+    /* Gray-200 */
+    --sidebar-bg: #f9fafb;
+    /* Gray-50 */
+    --accent-primary: #1f2937;
+    /* Dark Gray / Black */
+    --accent-secondary: #e5e7eb;
+    /* Gray-200 */
+  }
+
+  .theme-sakura {
+    /* Sakura Theme (Formerly Default Pastel Glass) */
     --bg-primary: linear-gradient(-45deg, #FFB6C1, #E6E6FA, #FFDAB9, #E0FFFF);
     --text-primary: #1D1D1F;
     --text-secondary: #4B5563;

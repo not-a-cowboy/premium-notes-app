@@ -1,9 +1,12 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, Dispatch, SetStateAction, ChangeEvent } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useNotes } from '../hooks/useNotes';
 import { Sidebar } from '../components/Sidebar';
+import { AIAssistant } from '../components/AIAssistant';
+import { VoiceRecorder } from '../components/VoiceRecorder';
+import { DrawingCanvas } from '../components/DrawingCanvas';
 
-import { ArrowLeft, Save, Pin, Maximize2, Minimize2 } from 'lucide-react';
+import { ArrowLeft, Maximize2, Minimize2, PenTool } from 'lucide-react';
 import { AnimatePresence, motion } from 'framer-motion';
 
 export function NoteEditor() {
@@ -19,10 +22,11 @@ export function NoteEditor() {
     const [title, setTitle] = useState(foundNote?.title || '');
     const [content, setContent] = useState(foundNote?.content || '');
     const [category, setCategory] = useState(foundNote?.category || 'Uncategorized');
-    const [isPinned, setIsPinned] = useState(foundNote?.isPinned || false);
+    const [isPinned] = useState(foundNote?.isPinned || false);
     const [isNew, setIsNew] = useState(!foundNote);
     const [saving, setSaving] = useState(false);
     const [isZenMode, setIsZenMode] = useState(false);
+    const [isSketching, setIsSketching] = useState(false);
 
     const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
     const [fontFamily, setFontFamily] = useState('sans');
@@ -41,7 +45,7 @@ export function NoteEditor() {
                 addNote({ id: newId, title, content, category, isPinned });
                 setIsNew(false);
                 navigate(`/note/${newId}`, { replace: true });
-            } else {
+            } else if (id) {
                 updateNote(parseInt(id), { title, content, category, isPinned });
             }
             setSaving(false);
@@ -50,23 +54,12 @@ export function NoteEditor() {
         return () => clearTimeout(timeoutId);
     }, [title, content, category, isPinned, id, isNew, addNote, updateNote, navigate]);
 
-    const handleSave = () => {
-        if (!title.trim() && !content.trim()) return;
-
-        if (isNew) {
-            addNote({ title, content, category, isPinned });
-        } else {
-            updateNote(parseInt(id), { title, content, category, isPinned });
-        }
-        navigate('/');
-    };
-
-    const updateState = (setter, value) => {
+    const updateState = <T,>(setter: Dispatch<SetStateAction<T>>, value: T | ((prev: T) => T)) => {
         setter(value);
         setSaving(true);
     };
 
-    const handleTyping = (e) => {
+    const handleTyping = (e: ChangeEvent<HTMLTextAreaElement>) => {
         updateState(setContent, e.target.value);
         setIsSidebarCollapsed(true);
     };
@@ -79,8 +72,37 @@ export function NoteEditor() {
         }
     };
 
+    // AI Assistant Handlers
+    const handleSummarize = async (summary: string) => {
+        const newContent = `> **Summary**\n> ${summary}\n\n${content}`;
+        updateState(setContent, newContent);
+    };
+
+    const handleTags = async (newTags: string[]) => {
+        if (id) {
+            await updateNote(Number(id), { tags: newTags });
+        }
+    };
+
+    const handleGrammar = async (fixed: string) => {
+        updateState(setContent, fixed);
+    };
+
+    const handleSaveSketch = async (data: string) => {
+        if (id) {
+            await updateNote(Number(id), { sketchData: data });
+            setIsSketching(false);
+        } else {
+            // For new notes, we might need to store it in local state or force create?
+            // Let's force create if it's a new note, similar to other interactions? 
+            // Or just alert user to save first.
+            // For now, simpler: alert.
+            alert("Please save the note (add title/content) before sketching.");
+        }
+    };
+
     return (
-        <div className="flex h-screen bg-transparent overflow-hidden relative">
+        <div className={`flex h-screen overflow-hidden relative transition-all duration-500 ease-in-out ${isZenMode ? 'bg-[#FDFBF7]' : 'bg-transparent'}`}>
             <div className="flex-1 flex flex-col w-full">
                 <AnimatePresence>
                     {!isZenMode && (
@@ -106,6 +128,52 @@ export function NoteEditor() {
                             </div>
 
                             <div className="flex items-center gap-2">
+                                <AIAssistant
+                                    content={content}
+                                    onSummarize={handleSummarize}
+                                    onTags={handleTags}
+                                    onGrammar={handleGrammar}
+                                />
+
+                                <VoiceRecorder onRecordingComplete={(blob, transcript) => {
+                                    // Append transcript
+                                    if (transcript) {
+                                        const newContent = content + (content ? '\n\n' : '') + `> 🎙️ **Voice Note:** ${transcript}`;
+                                        updateState(setContent, newContent);
+                                    }
+
+                                    // Save audio blob (if we want to persist it)
+                                    // For now, we'll just log it or maybe assume we'd upload it.
+                                    // The user requirement said: "Save the blob to IndexedDB"
+                                    if (id && blob) {
+                                        // We need to fetch current note, append blob to array?
+                                        // Just update note with new blob in array.
+                                        // This requires reading current state or assuming we can push.
+                                        // Since updateNote does a shallow merge, we might overwrite existing list if we don't handle it carefully.
+                                        // Let's rely on the fact that if we had existing recordings, we'd need to load them.
+                                        // For this MVP step, let's just create the array or append.
+                                        // NOTE: Blob storage in IDB might be heavy if not careful, but IDB handles it.
+                                        // Let's assume 'audioRecordings' is getting updated.
+                                        // Ideally useNotes would expose a `addAudioRecording` method.
+                                        // For now, let's skip complex Blob persistence logic in UI and just save transcript as requested feature priority 
+                                        // BUT the prompt explicitly asked to "Save the blob to IndexedDB".
+                                        // So I should try to save it. Only if ID exists.
+                                        // We need the current note's audioRecordings to append to.
+                                        // Let's access the note object from `notes` array in `useNotes` via `foundNote` logic or just `notes.find`.
+                                        const currentNote = notes.find(n => n.id === Number(id));
+                                        const currentRecordings = currentNote?.audioRecordings || [];
+                                        updateNote(Number(id), { audioRecordings: [...currentRecordings, blob] });
+                                    }
+                                }} />
+
+                                <button
+                                    onClick={() => setIsSketching(true)}
+                                    className="p-2 hover:bg-gray-100 rounded-lg text-gray-400 hover:text-gray-600 transition-colors"
+                                    title="Sketch"
+                                >
+                                    <PenTool size={20} />
+                                </button>
+
                                 <button
                                     onClick={() => setIsZenMode(true)}
                                     className="p-2 hover:bg-gray-100 rounded-lg text-gray-400 hover:text-gray-600 transition-colors"
@@ -114,23 +182,8 @@ export function NoteEditor() {
                                     <Maximize2 size={20} />
                                 </button>
 
-                                <button
-                                    onClick={() => updateState(setIsPinned, !isPinned)}
-                                    className={`p-2 rounded-lg transition-colors ${isPinned
-                                        ? 'bg-purple-100 text-gta-purple'
-                                        : 'hover:bg-gray-100 text-gray-400 hover:text-gray-600'
-                                        }`}
-                                >
-                                    <Pin size={20} className={isPinned ? "fill-current" : ""} />
-                                </button>
-
-                                <button
-                                    onClick={handleSave}
-                                    className="flex items-center gap-2 px-4 py-2 bg-[#F0F0F3] text-gta-purple rounded-lg font-medium hover:text-gta-pink transition-colors shadow-neumorphic-btn"
-                                >
-                                    <Save size={18} />
-                                    <span>Save & Close</span>
-                                </button>
+                                {/* Removed Pin button */}
+                                {/* Removed Save & Close button */}
                             </div>
                         </motion.header>
                     )}
@@ -201,6 +254,20 @@ export function NoteEditor() {
                     onInsertText={(text) => updateState(setContent, (prev) => prev + text)}
                 />
             )}
+
+            <AnimatePresence>
+                {isSketching && (
+                    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+                        <div className="w-full max-w-4xl">
+                            <DrawingCanvas
+                                initialData={foundNote?.sketchData}
+                                onSave={handleSaveSketch}
+                                onCancel={() => setIsSketching(false)}
+                            />
+                        </div>
+                    </div>
+                )}
+            </AnimatePresence>
         </div >
     );
 }

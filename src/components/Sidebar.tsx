@@ -1,26 +1,31 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { Type, AlignLeft, AlignCenter, AlignRight, Palette, X, List, Image, Upload } from 'lucide-react';
-import { useTheme } from '../context/ThemeContext';
-import { useRef } from 'react';
+import { useRef, ChangeEvent } from 'react';
 import { ThemePicker } from './ThemePicker';
 
-export function Sidebar({ isCollapsed, setIsCollapsed, fontFamily, setFontFamily, textAlign, setTextAlign, onInsertText }) {
-    const fileInputRef = useRef(null);
-    const { theme, setTheme } = useTheme();
+interface SidebarProps {
+    isCollapsed: boolean;
+    setIsCollapsed: (collapsed: boolean) => void;
+    fontFamily: string;
+    setFontFamily: (font: string) => void;
+    textAlign: string;
+    setTextAlign: (align: string) => void;
+    onInsertText: (text: string) => void;
+}
 
-    const themes = [
-        { id: 'default', name: 'Default', color: 'linear-gradient(135deg, #FFB6C1, #E0FFFF)' },
-        { id: 'midnight', name: 'Midnight', color: '#1E1B4B' },
-        { id: 'soft-paper', name: 'Paper', color: '#F5F5F4' }
-    ];
+export function Sidebar({ isCollapsed, setIsCollapsed, fontFamily, setFontFamily, textAlign, setTextAlign, onInsertText }: SidebarProps) {
+    const fileInputRef = useRef<HTMLInputElement>(null);
 
-    const handleFileUpload = (e) => {
-        const file = e.target.files[0];
+    const handleFileUpload = (e: ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
         if (!file) return;
 
         const reader = new FileReader();
-        reader.onload = (e) => {
-            onInsertText('\n' + e.target.result);
+        reader.onload = (ev) => {
+            const result = ev.target?.result;
+            if (typeof result === 'string') {
+                onInsertText('\n' + result);
+            }
         };
         reader.readAsText(file);
     };
@@ -61,19 +66,19 @@ export function Sidebar({ isCollapsed, setIsCollapsed, fontFamily, setFontFamily
                             <div className="grid grid-cols-3 gap-2">
                                 <button
                                     onClick={() => setFontFamily('sans')}
-                                    className={`p - 2 rounded - lg text - sm border transition - all ${fontFamily === 'sans' ? 'bg-gta-purple text-white border-transparent' : 'bg-white/40 border-white/50 hover:bg-white/60'} `}
+                                    className={`p-2 rounded-lg text-sm border transition-all ${fontFamily === 'sans' ? 'bg-gta-purple text-white border-transparent' : 'bg-white/40 border-white/50 hover:bg-white/60'} `}
                                 >
                                     Sans
                                 </button>
                                 <button
                                     onClick={() => setFontFamily('serif')}
-                                    className={`p - 2 rounded - lg text - sm border font - serif transition - all ${fontFamily === 'serif' ? 'bg-gta-purple text-white border-transparent' : 'bg-white/40 border-white/50 hover:bg-white/60'} `}
+                                    className={`p-2 rounded-lg text-sm border font-serif transition-all ${fontFamily === 'serif' ? 'bg-gta-purple text-white border-transparent' : 'bg-white/40 border-white/50 hover:bg-white/60'} `}
                                 >
                                     Serif
                                 </button>
                                 <button
                                     onClick={() => setFontFamily('mono')}
-                                    className={`p - 2 rounded - lg text - sm border font - mono transition - all ${fontFamily === 'mono' ? 'bg-gta-purple text-white border-transparent' : 'bg-white/40 border-white/50 hover:bg-white/60'} `}
+                                    className={`p-2 rounded-lg text-sm border font-mono transition-all ${fontFamily === 'mono' ? 'bg-gta-purple text-white border-transparent' : 'bg-white/40 border-white/50 hover:bg-white/60'} `}
                                 >
                                     Mono
                                 </button>
@@ -88,7 +93,7 @@ export function Sidebar({ isCollapsed, setIsCollapsed, fontFamily, setFontFamily
                                     <button
                                         key={align}
                                         onClick={() => setTextAlign(align)}
-                                        className={`flex - 1 p - 2 rounded - md flex justify - center transition - all ${textAlign === align ? 'bg-white shadow-sm text-gta-purple' : 'text-gray-400 hover:text-gray-600'} `}
+                                        className={`flex-1 p-2 rounded-md flex justify-center transition-all ${textAlign === align ? 'bg-white shadow-sm text-gta-purple' : 'text-gray-400 hover:text-gray-600'} `}
                                     >
                                         {align === 'left' && <AlignLeft size={20} />}
                                         {align === 'center' && <AlignCenter size={20} />}
@@ -97,8 +102,6 @@ export function Sidebar({ isCollapsed, setIsCollapsed, fontFamily, setFontFamily
                                 ))}
                             </div>
                         </div>
-
-
 
                         {/* Theme Picker */}
                         <div className="mb-8">

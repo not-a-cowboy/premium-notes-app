@@ -1,8 +1,19 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Search, FileText, Plus, Home } from 'lucide-react';
+import { Search, FileText, Plus, Home, LucideIcon } from 'lucide-react';
 import { useNotes } from '../hooks/useNotes';
+import { Note } from '../types';
+
+interface ActionItem {
+    id: string;
+    title: string;
+    icon: LucideIcon;
+    action: () => void;
+    content?: undefined;
+}
+
+type CommandItem = ActionItem | Note;
 
 export function CommandPalette() {
     const [isOpen, setIsOpen] = useState(false);
@@ -18,16 +29,16 @@ export function CommandPalette() {
     ).slice(0, 5); // Limit to 5 results
 
     // Static actions
-    const actions = [
+    const actions: ActionItem[] = [
         { id: 'new', title: 'Create New Note', icon: Plus, action: () => navigate('/new') },
         { id: 'home', title: 'Go Home', icon: Home, action: () => navigate('/') },
     ];
 
     // Combine results: Actions first if no search, else Actions + Notes
-    const results = search.trim() === '' ? actions : [...actions, ...filteredNotes];
+    const results: CommandItem[] = search.trim() === '' ? actions : [...actions, ...filteredNotes];
 
     useEffect(() => {
-        const handleKeyDown = (e) => {
+        const handleKeyDown = (e: KeyboardEvent) => {
             if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
                 e.preventDefault();
                 setIsOpen(prev => !prev);
@@ -43,9 +54,9 @@ export function CommandPalette() {
         return () => window.removeEventListener('keydown', handleKeyDown);
     }, []);
 
-    const handleSelect = (item) => {
+    const handleSelect = (item: CommandItem) => {
         setIsOpen(false);
-        if (item.action) {
+        if ('action' in item && item.action) {
             item.action();
         } else {
             // It's a note
@@ -56,7 +67,7 @@ export function CommandPalette() {
     // Keyboard navigation for list
     useEffect(() => {
         if (!isOpen) return;
-        const handleNavigation = (e) => {
+        const handleNavigation = (e: KeyboardEvent) => {
             if (e.key === 'ArrowDown') {
                 e.preventDefault();
                 setSelectedIndex(prev => (prev + 1) % results.length);
@@ -120,14 +131,14 @@ export function CommandPalette() {
                                         onClick={() => handleSelect(item)}
                                         className={`w-full text-left px-4 py-3 flex items-center gap-3 transition-colors ${index === selectedIndex ? 'bg-gta-purple/20 text-gta-purple' : 'hover:bg-gray-50 text-gray-700'}`}
                                     >
-                                        {item.icon ? (
+                                        {'icon' in item ? (
                                             <item.icon size={18} className={index === selectedIndex ? "text-gta-purple" : "text-gray-400"} />
                                         ) : (
                                             <FileText size={18} className={index === selectedIndex ? "text-gta-purple" : "text-gray-400"} />
                                         )}
                                         <div className="flex-1 min-w-0">
                                             <p className={`font-medium truncate ${index === selectedIndex ? "text-gray-900" : ""}`}>{item.title}</p>
-                                            {!item.action && (
+                                            {!('action' in item) && (
                                                 <p className="text-xs text-gray-400 truncate">{item.content}</p>
                                             )}
                                         </div>
