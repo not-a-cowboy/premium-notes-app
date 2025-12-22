@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Trash2, Check, Pin } from 'lucide-react';
+import { Trash2, Check, Pin, FileText, Activity } from 'lucide-react';
 import { Note } from '../types';
 
 interface NoteCardProps {
@@ -31,62 +31,89 @@ export function NoteCard({ note, onDelete, onTogglePin, onClick }: NoteCardProps
     return (
         <motion.div
             layout
-            initial={{ opacity: 0, scale: 0.9 }}
+            initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.9 }}
+            exit={{ opacity: 0, scale: 0.95 }}
             whileHover={{ y: -5, transition: { duration: 0.2 } }}
             onClick={onClick}
             className={`
-                relative group rounded-3xl p-6 cursor-pointer overflow-hidden
-                backdrop-blur-md border border-white/40 shadow-sm hover:shadow-xl transition-all duration-300
+                relative group p-0 cursor-pointer 
                 flex flex-col h-64
-                ${note.isPinned ? 'bg-purple-50/80 border-purple-200' : 'bg-white/60'}
+                ${note.isPinned
+                    ? 'border-2 border-[var(--accent-primary)] bg-[var(--card-bg)]'
+                    : 'border border-[var(--card-border)] bg-[var(--card-bg)] hover:border-[var(--text-primary)]'
+                }
+                transition-all duration-300
             `}
         >
-            {/* Pin Badge */}
-            {note.isPinned && (
-                <div className="absolute top-4 right-4 text-gta-purple transform rotate-45">
-                    <Pin size={18} fill="currentColor" />
-                </div>
-            )}
+            {/* Chamfered visual hack (optional, or use clip-path on container) */}
+            <div className="absolute top-0 right-0 w-8 h-8 bg-m-yellow clip-polygon hidden" />
 
-            {/* Content */}
-            <div className="flex-1 overflow-hidden">
-                <h3 className="text-xl font-bold text-gray-800 mb-2 line-clamp-1">{note.title || 'Untitled'}</h3>
-                <p className="text-gray-600 text-sm leading-relaxed line-clamp-4 font-medium">
-                    {note.content || 'No content'}
+            {/* Header Strip */}
+            <div className="flex justify-between items-center p-3 border-b border-[var(--card-border)] bg-black/20">
+                <div className="flex items-center gap-2">
+                    {note.isPinned ? <Pin size={12} className="text-[var(--accent-primary)]" /> : <Activity size={12} className="text-[var(--accent-secondary)]" />}
+                    <span className="font-technical text-[10px] text-[var(--text-muted)] uppercase tracking-wider">
+                        ID_{note.id.toString().slice(-4)}
+                    </span>
+                </div>
+                <div className="flex gap-1">
+                    <div className="w-1 h-1 bg-[var(--text-muted)] rounded-full" />
+                    <div className="w-1 h-1 bg-[var(--text-muted)] rounded-full" />
+                    <div className="w-1 h-1 bg-[var(--text-muted)] rounded-full" />
+                </div>
+            </div>
+
+            {/* Content Area */}
+            <div className="flex-1 p-4 overflow-hidden relative">
+                {/* Background Grid Pattern in card */}
+                <div className="absolute inset-0 opacity-10 pointer-events-none"
+                    style={{
+                        backgroundImage: "linear-gradient(var(--text-secondary) 1px, transparent 1px), linear-gradient(90deg, var(--text-secondary) 1px, transparent 1px)",
+                        backgroundSize: "20px 20px"
+                    }}
+                />
+
+                <h3 className={`text-xl font-bold uppercase mb-3 line-clamp-1 font-display tracking-tight ${note.isPinned ? 'text-[var(--accent-primary)]' : 'text-[var(--text-primary)]'}`}>
+                    {note.title || 'UNTITLED_RECORD'}
+                </h3>
+
+                <p className="text-[var(--text-secondary)] text-xs font-mono leading-relaxed line-clamp-5">
+                    {note.content || 'NO_DATA_AVAILABLE...'}
                 </p>
             </div>
 
             {/* Footer / Actions */}
-            <div className="mt-4 flex items-center justify-between opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-                <span className="text-xs font-bold text-gray-400 uppercase tracking-widest">{note.category}</span>
+            <div className="p-3 border-t border-[var(--card-border)] bg-black/20 flex items-center justify-between group-hover:bg-[var(--accent-primary)]/10 transition-colors">
+                <span className="text-[10px] font-bold text-[var(--accent-secondary)] uppercase tracking-widest border border-[var(--accent-secondary)]/30 px-2 py-0.5">
+                    {note.category || 'NULL'}
+                </span>
 
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
                     <button
                         onClick={handlePin}
-                        className={`p-2 rounded-full hover:bg-white/50 transition-colors ${note.isPinned ? 'text-gta-purple' : 'text-gray-400'}`}
-                        title={note.isPinned ? "Unpin" : "Pin"}
+                        className={`p-1.5 hover:bg-[var(--text-primary)] hover:text-black transition-colors ${note.isPinned ? 'text-[var(--accent-primary)]' : 'text-[var(--text-muted)]'}`}
+                        title="TOGGLE_PIN"
                     >
-                        <Pin size={16} />
+                        <Pin size={14} />
                     </button>
                     <button
                         onClick={handleDelete}
-                        className={`p-2 rounded-full hover:bg-red-50 transition-colors ${isDeleting ? 'text-red-600 bg-red-100' : 'text-gray-400 hover:text-red-500'}`}
-                        title="Delete"
+                        className={`p-1.5 hover:bg-m-red hover:text-black transition-colors ${isDeleting ? 'text-m-red bg-white' : 'text-[var(--text-muted)]'}`}
+                        title="PURGE_RECORD"
                     >
-                        {isDeleting ? <Check size={16} /> : <Trash2 size={16} />}
+                        {isDeleting ? <Check size={14} /> : <Trash2 size={14} />}
                     </button>
                 </div>
             </div>
 
-            {/* Delete Confirmation Overlay (Optional visual cue) */}
+            {/* Delete Progress Bar */}
             {isDeleting && (
                 <motion.div
                     initial={{ width: '0%' }}
                     animate={{ width: '100%' }}
                     transition={{ duration: 2 }}
-                    className="absolute bottom-0 left-0 h-1 bg-red-500/50"
+                    className="absolute bottom-0 left-0 h-1 bg-m-red"
                 />
             )}
         </motion.div>

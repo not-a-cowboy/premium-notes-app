@@ -18,7 +18,8 @@ vi.mock('../supabase', () => ({
             subscribe: vi.fn()
         })),
         removeChannel: vi.fn()
-    }
+    },
+    isSupabaseConfigured: true
 }));
 
 // Mock AuthContext

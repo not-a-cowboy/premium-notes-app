@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { DragDropContext, Droppable, Draggable, DropResult } from '@hello-pangea/dnd';
 import { useNotes } from '../hooks/useNotes';
 import { Note } from '../types';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, GripHorizontal } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 export function KanbanBoard() {
@@ -13,21 +13,14 @@ export function KanbanBoard() {
     useEffect(() => {
         const grouped: { [key: string]: Note[] } = {};
 
-        // Ensure we have at least these default columns if they exist in notes, or just dynamic
-        // Let's go purely dynamic based on existing categories + "Uncategorized"
         const allCategories = new Set(notes.map(n => n.category || 'Uncategorized'));
-        // Always ensure 'Uncategorized' and maybe 'To Do', 'Doing', 'Done' if we want defaults?
-        // User request: "Dynamically generate columns based on unique Note.category"
-        // Let's add 'Uncategorized' default if not present, and maybe sort them?
         if (!allCategories.has('Uncategorized')) allCategories.add('Uncategorized');
 
-        // Initialize arrays
         allCategories.forEach(cat => grouped[cat] = []);
 
-        // Fill arrays
         notes.forEach(note => {
             const cat = note.category || 'Uncategorized';
-            if (!grouped[cat]) grouped[cat] = []; // Just in case
+            if (!grouped[cat]) grouped[cat] = [];
             grouped[cat].push(note);
         });
 
@@ -44,25 +37,22 @@ export function KanbanBoard() {
             return;
         }
 
-        // Just update the category
         const newCategory = destination.droppableId;
         const noteId = Number(draggableId);
-
-        // Optimistic UI update could be complex with the useEffect dependency.
-        // We'll trust the DB update triggers a re-render via useNotes -> useEffect.
-        // But for smoothness, we might want local state update?
-        // Actually, if we update DB, useNotes re-fetches or updates state, causing this component to re-render.
-        // Let's fire the update.
         updateNote(noteId, { category: newCategory });
     };
 
     return (
-        <div className="min-h-screen bg-gray-50 flex flex-col">
-            <div className="p-4 border-b bg-white/80 backdrop-blur sticky top-0 z-10 flex items-center gap-4">
-                <Link to="/" className="p-2 hover:bg-gray-100 rounded-full transition-colors">
-                    <ArrowLeft className="w-6 h-6 text-gray-600" />
+        <div className="min-h-screen bg-transparent flex flex-col font-mono text-m-white">
+            {/* Header */}
+            <div className="p-4 border-b-2 border-m-gray bg-m-dark sticky top-0 z-10 flex items-center gap-4 shadow-lg">
+                <Link to="/" className="p-2 hover:bg-m-white hover:text-black transition-colors rounded-none border border-transparent hover:border-m-white">
+                    <ArrowLeft className="w-6 h-6" />
                 </Link>
-                <h1 className="text-xl font-bold text-gray-800">Board View</h1>
+                <div>
+                    <h1 className="text-xl font-black uppercase tracking-tighter text-m-white">TASK_MATRIX // KANBAN</h1>
+                    <p className="text-[10px] text-m-yellow uppercase tracking-widest">ORGANIZE_DATA_STREAMS</p>
+                </div>
             </div>
 
             <div className="flex-1 overflow-x-auto overflow-y-hidden">
@@ -74,12 +64,13 @@ export function KanbanBoard() {
                                     <div
                                         ref={provided.innerRef}
                                         {...provided.droppableProps}
-                                        className={`w-80 flex flex-col rounded-xl transition-colors ${snapshot.isDraggingOver ? 'bg-indigo-50/50' : 'bg-gray-100/50'
+                                        className={`w-80 flex flex-col border border-m-gray/50 transition-colors ${snapshot.isDraggingOver ? 'bg-m-gray/20 border-m-yellow' : 'bg-m-black/40'
                                             }`}
                                     >
-                                        <div className="p-4 font-bold text-gray-700 uppercase tracking-wider text-sm sticky top-0 bg-transparent flex justify-between items-center">
-                                            {columnId}
-                                            <span className="bg-gray-200 text-gray-600 text-xs px-2 py-1 rounded-full">
+                                        {/* Column Header */}
+                                        <div className="p-3 border-b border-m-gray/50 flex justify-between items-center bg-m-dark/80">
+                                            <span className="font-bold uppercase tracking-widest text-xs text-m-blue">{columnId}</span>
+                                            <span className="bg-m-blue/10 border border-m-blue/30 text-m-blue text-[10px] px-2 py-0.5 font-mono">
                                                 {columns[columnId].length}
                                             </span>
                                         </div>
@@ -97,14 +88,23 @@ export function KanbanBoard() {
                                                                 opacity: snapshot.isDragging ? 0.8 : 1
                                                             }}
                                                         >
-                                                            {/* Minimal card content */}
-                                                            <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-200 hover:shadow-md transition-shadow cursor-grab active:cursor-grabbing">
-                                                                <h4 className="font-bold text-gray-900 mb-1 line-clamp-2">{note.title || "Untitled"}</h4>
-                                                                <p className="text-gray-500 text-xs line-clamp-3 mb-2">{note.content}</p>
+                                                            {/* Card */}
+                                                            <div className="group bg-m-black p-4 border border-m-gray hover:border-m-white transition-all cursor-grab active:cursor-grabbing relative overflow-hidden">
+                                                                {/* Decorative Corner */}
+                                                                <div className="absolute top-0 right-0 w-2 h-2 bg-m-yellow opacity-0 group-hover:opacity-100 transition-opacity" />
+
+                                                                <div className="flex justify-between items-start mb-2">
+                                                                    <span className="text-[9px] text-gray-500 font-mono">ID_{note.id}</span>
+                                                                    <GripHorizontal size={12} className="text-gray-600 group-hover:text-m-yellow" />
+                                                                </div>
+
+                                                                <h4 className="font-bold text-sm uppercase mb-1 line-clamp-2 text-m-white group-hover:text-m-yellow transition-colors">{note.title || "NULL_TITLE"}</h4>
+                                                                <p className="text-gray-500 text-[10px] line-clamp-3 mb-2 font-mono leading-relaxed">{note.content || "NO_DATA"}</p>
+
                                                                 {note.tags && note.tags.length > 0 && (
-                                                                    <div className="flex flex-wrap gap-1">
+                                                                    <div className="flex flex-wrap gap-1 mt-2 pt-2 border-t border-gray-800">
                                                                         {note.tags.slice(0, 2).map((tag, i) => (
-                                                                            <span key={i} className="text-[10px] bg-indigo-50 text-indigo-500 px-1.5 py-0.5 rounded">#{tag}</span>
+                                                                            <span key={i} className="text-[9px] border border-gray-700 text-gray-400 px-1.5 py-0.5 uppercase">#{tag}</span>
                                                                         ))}
                                                                     </div>
                                                                 )}

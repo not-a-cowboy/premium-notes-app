@@ -27,7 +27,13 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
 
     useEffect(() => {
         const root = document.body;
-        root.classList.remove('theme-midnight', 'theme-soft-paper', 'theme-sakura');
+        // Remove all previous theme classes
+        root.classList.forEach(cls => {
+            if (cls.startsWith('theme-')) {
+                root.classList.remove(cls);
+            }
+        });
+
         if (theme !== 'default') {
             root.classList.add(`theme-${theme}`);
         }

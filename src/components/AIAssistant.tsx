@@ -18,7 +18,7 @@ export function AIAssistant({ content, onSummarize, onTags, onGrammar }: AIAssis
     const handleAction = async (action: 'summary' | 'tags' | 'grammar') => {
         const apiKey = localStorage.getItem('premium-notes-ai-key');
         if (!apiKey) {
-            alert("Please set your API Key in the Home Settings first.");
+            alert("ERR: API_KEY_MISSING. CHECK_CONFIG.");
             return;
         }
 
@@ -38,7 +38,7 @@ export function AIAssistant({ content, onSummarize, onTags, onGrammar }: AIAssis
             }
         } catch (error) {
             console.error(error);
-            alert("AI Request Failed: " + (error as Error).message);
+            alert("AI_PROCESS_FAILED: " + (error as Error).message);
         } finally {
             setIsLoading(false);
             setActiveAction(null);
@@ -47,17 +47,17 @@ export function AIAssistant({ content, onSummarize, onTags, onGrammar }: AIAssis
     };
 
     return (
-        <div className="relative z-50">
+        <div className="relative z-50 font-mono">
             <button
                 onClick={() => setIsOpen(!isOpen)}
-                className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium transition-all ${isOpen || isLoading
-                        ? 'bg-gradient-to-r from-indigo-500 to-purple-500 text-white shadow-md'
-                        : 'bg-white/50 text-gray-600 hover:bg-white/80 hover:text-indigo-600'
+                className={`flex items-center gap-2 px-4 py-2 text-xs font-bold uppercase tracking-wider transition-all border ${isOpen || isLoading
+                    ? 'bg-m-yellow text-black border-m-yellow shadow-[0_0_10px_rgba(204,255,0,0.5)]'
+                    : 'bg-transparent text-m-yellow border-m-yellow hover:bg-m-yellow hover:text-black'
                     }`}
                 disabled={isLoading}
             >
-                {isLoading ? <Loader2 size={16} className="animate-spin" /> : <Sparkles size={16} />}
-                {isLoading ? (activeAction === 'summary' ? 'Summarizing...' : activeAction === 'tags' ? 'Tagging...' : 'Fixing...') : 'AI Assistant'}
+                {isLoading ? <Loader2 size={14} className="animate-spin" /> : <Sparkles size={14} />}
+                {isLoading ? (activeAction === 'summary' ? 'PROCESSING...' : activeAction === 'tags' ? 'ANALYZING...' : 'CORRECTING...') : 'AI_CORE'}
             </button>
 
             <AnimatePresence>
@@ -68,26 +68,36 @@ export function AIAssistant({ content, onSummarize, onTags, onGrammar }: AIAssis
                             initial={{ opacity: 0, y: 10, scale: 0.95 }}
                             animate={{ opacity: 1, y: 0, scale: 1 }}
                             exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                            className="absolute right-0 top-full mt-2 w-48 bg-white/90 backdrop-blur-xl border border-white/50 rounded-xl shadow-xl p-1 z-50 overflow-hidden"
+                            className="absolute right-0 top-full mt-2 w-56 bg-m-black border-2 border-m-gray shadow-xl p-0 z-50 overflow-hidden"
                         >
+                            <div className="bg-m-gray px-2 py-1 text-[10px] text-gray-400 font-bold uppercase tracking-widest border-b border-black">
+                                Select Protocol
+                            </div>
                             <button
                                 onClick={() => handleAction('summary')}
-                                className="w-full text-left px-3 py-2 rounded-lg hover:bg-indigo-50 text-gray-700 text-sm flex items-center gap-2"
+                                className="w-full text-left px-4 py-3 hover:bg-m-white hover:text-black text-m-white text-xs uppercase font-bold flex items-center gap-3 border-b border-m-gray/20 transition-colors group"
                             >
-                                <FileText size={14} className="text-indigo-500" /> Summarize
+                                <FileText size={14} className="text-m-blue group-hover:text-black" />
+                                Summarize_Log
                             </button>
                             <button
                                 onClick={() => handleAction('tags')}
-                                className="w-full text-left px-3 py-2 rounded-lg hover:bg-purple-50 text-gray-700 text-sm flex items-center gap-2"
+                                className="w-full text-left px-4 py-3 hover:bg-m-white hover:text-black text-m-white text-xs uppercase font-bold flex items-center gap-3 border-b border-m-gray/20 transition-colors group"
                             >
-                                <Tag size={14} className="text-purple-500" /> Auto-Tag
+                                <Tag size={14} className="text-m-yellow group-hover:text-black" />
+                                Generate_Meta
                             </button>
                             <button
                                 onClick={() => handleAction('grammar')}
-                                className="w-full text-left px-3 py-2 rounded-lg hover:bg-pink-50 text-gray-700 text-sm flex items-center gap-2"
+                                className="w-full text-left px-4 py-3 hover:bg-m-white hover:text-black text-m-white text-xs uppercase font-bold flex items-center gap-3 transition-colors group"
                             >
-                                <Wand2 size={14} className="text-pink-500" /> Fix Grammar
+                                <Wand2 size={14} className="text-m-red group-hover:text-black" />
+                                Syntax_Check
                             </button>
+
+                            <div className="bg-black p-1 text-[8px] text-right text-gray-600 font-mono">
+                                V.2.0.4 ACTIVE
+                            </div>
                         </motion.div>
                     </>
                 )}

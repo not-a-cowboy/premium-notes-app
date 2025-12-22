@@ -2,7 +2,6 @@ import { useMemo, useState, useEffect } from 'react';
 import ForceGraph2D from 'react-force-graph-2d';
 import { useNavigate } from 'react-router-dom';
 import { Note } from '../types';
-// import { useTheme } from '../context/ThemeContext'; // Assuming we have theme context access or just use standard colors
 
 interface GraphViewProps {
     notes: Note[];
@@ -29,10 +28,10 @@ export function GraphView({ notes }: GraphViewProps) {
         notes.forEach(note => {
             nodes.push({
                 id: `note-${note.id}`,
-                name: note.title || 'Untitled',
+                name: note.title || 'NULL_NODE',
                 val: 1, // Size
                 type: 'note',
-                color: '#8B5CF6' // GTA Purple
+                color: '#CCFF00' // m-yellow
             });
 
             // 2. Process Tags for Links
@@ -44,17 +43,17 @@ export function GraphView({ notes }: GraphViewProps) {
                         // Create Tag Node
                         nodes.push({
                             id: tagId,
-                            name: `#${tag}`,
+                            name: `[${tag}]`,
                             val: 0.5,
                             type: 'tag',
-                            color: '#F59E0B' // Amber/Yellow
+                            color: '#00F0FF' // m-blue
                         });
                     }
                     // Link Note -> Tag
                     links.push({
                         source: `note-${note.id}`,
                         target: tagMap.get(tag),
-                        color: 'rgba(0,0,0,0.1)'
+                        color: 'rgba(255, 255, 255, 0.1)'
                     });
                 });
             }
@@ -70,7 +69,7 @@ export function GraphView({ notes }: GraphViewProps) {
                     links.push({
                         source: `note-${note.id}`,
                         target: `note-${targetNote.id}`,
-                        color: 'rgba(139, 92, 246, 0.3)' // Purple link
+                        color: 'rgba(204, 255, 0, 0.4)' // m-yellow link
                     });
                 }
             }
@@ -80,13 +79,21 @@ export function GraphView({ notes }: GraphViewProps) {
     }, [notes]);
 
     return (
-        <div className="fixed inset-0 bg-[#F3F4F6] z-50">
+        <div className="fixed inset-0 bg-[#050505] z-50 overflow-hidden">
+            {/* Grid Overlay */}
+            <div className="absolute inset-0 pointer-events-none opacity-20 bg-[linear-gradient(to_right,#333_1px,transparent_1px),linear-gradient(to_bottom,#333_1px,transparent_1px)] bg-[size:40px_40px]" />
+
             <button
                 onClick={() => navigate('/')}
-                className="absolute top-6 left-6 z-50 p-3 bg-white shadow-lg rounded-xl font-bold text-gray-700 hover:bg-gray-50 border border-gray-100 transition-all"
+                className="absolute top-6 left-6 z-50 px-6 py-2 bg-m-black border border-m-gray text-m-white hover:border-m-red hover:text-m-red transition-all font-mono uppercase tracking-widest text-xs"
             >
-                ← Back to Notes
+                &lt; ABORT_VIEW
             </button>
+
+            <div className="absolute top-6 right-6 z-50 pointer-events-none text-right">
+                <h1 className="text-xl font-black uppercase text-m-white tracking-tighter">NEURAL_NET // VISUALIZER</h1>
+                <p className="text-[10px] text-m-blue font-mono">ACTIVE_NODES: {notes.length}</p>
+            </div>
 
             <ForceGraph2D
                 width={dimensions.width}
@@ -104,29 +111,39 @@ export function GraphView({ notes }: GraphViewProps) {
                 nodeCanvasObject={(node: any, ctx, globalScale) => {
                     const label = node.name;
                     const fontSize = 12 / globalScale;
-                    ctx.font = `${fontSize}px Sans-Serif`;
-                    // const textWidth = ctx.measureText(label).width;
-                    // const bckgDimensions = [textWidth, fontSize].map(n => n + fontSize * 0.2); // some padding
-
-                    ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
-                    if (node.type === 'tag') ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+                    ctx.font = `bold ${fontSize}px Space Mono, monospace`;
 
                     ctx.beginPath();
-                    // Draw circle/pill background
-                    ctx.arc(node.x, node.y, node.val * 4, 0, 2 * Math.PI, false);
-                    ctx.fillStyle = node.color;
-                    ctx.fill();
+                    if (node.type === 'note') {
+                        // Square for notes
+                        ctx.fillStyle = node.color;
+                        const size = node.val * 4;
+                        ctx.rect(node.x - size, node.y - size, size * 2, size * 2);
+                        ctx.fill();
+
+                        // Border
+                        ctx.strokeStyle = 'rgba(0,0,0,0.8)';
+                        ctx.lineWidth = 1 / globalScale;
+                        ctx.stroke();
+
+                    } else {
+                        // Diamond for tags
+                        ctx.fillStyle = node.color;
+                        const size = node.val * 3;
+                        ctx.moveTo(node.x, node.y - size);
+                        ctx.lineTo(node.x + size, node.y);
+                        ctx.lineTo(node.x, node.y + size);
+                        ctx.lineTo(node.x - size, node.y);
+                        ctx.fill();
+                    }
 
                     // Text
                     ctx.textAlign = 'center';
-                    ctx.textBaseline = 'middle';
-                    ctx.fillStyle = '#1f2937'; // gray-800
-                    if (node.type === 'tag') {
-                        ctx.fillStyle = '#78350f'; // amber-900
-                        ctx.font = `italic ${fontSize}px Sans-Serif`;
-                    }
-                    ctx.fillText(label, node.x, node.y + (node.val * 4) + fontSize);
+                    ctx.textBaseline = 'top';
+                    ctx.fillStyle = node.type === 'note' ? '#E5E5E5' : '#00F0FF';
+                    ctx.fillText(label, node.x, node.y + (node.val * 5));
                 }}
+                linkColor={() => '#333'}
             />
         </div>
     );

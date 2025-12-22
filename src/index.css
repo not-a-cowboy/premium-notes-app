@@ -4,125 +4,201 @@
 
 @layer base {
 
-  /* Selection & Scrollbar Styling Defaults */
+  /* --- GLOBAL RESETS & SCROLLBAR --- */
+
+  /* Acid Selection */
   ::selection {
-    background-color: var(--accent-secondary);
-    color: var(--text-primary);
+    background-color: theme('colors.m-yellow');
+    color: theme('colors.m-black');
   }
 
   ::-webkit-scrollbar {
-    width: 8px;
+    width: 6px;
+    height: 6px;
   }
 
   ::-webkit-scrollbar-track {
-    background: transparent;
+    background: theme('colors.m-black');
   }
 
   ::-webkit-scrollbar-thumb {
-    background: var(--text-muted);
-    border-radius: 4px;
-    opacity: 0.5;
+    background: theme('colors.m-gray');
+    border-radius: 0px;
   }
 
   ::-webkit-scrollbar-thumb:hover {
-    background: var(--text-secondary);
+    background: theme('colors.m-white');
   }
+
+  /* --- VARIABLES FOR THEMES --- */
 
   :root {
-    /* Default Theme (Neutral / Premium) */
-    --bg-primary: #ffffff;
-    /* Clean white for a modern feel */
-    --text-primary: #1f2937;
-    /* Gray-800 */
-    --text-secondary: #4b5563;
-    /* Gray-600 */
-    --text-muted: #9ca3af;
-    /* Gray-400 */
-    --card-bg: rgba(255, 255, 255, 0.8);
-    --card-border: rgba(229, 231, 235, 0.5);
-    /* Gray-200 */
-    --sidebar-bg: #f9fafb;
-    /* Gray-50 */
-    --accent-primary: #1f2937;
-    /* Dark Gray / Black */
-    --accent-secondary: #e5e7eb;
-    /* Gray-200 */
+    /* DEFAULT: MARATHON / GRAPHIC REALISM */
+    --bg-primary: #050505;
+    --text-primary: #FAFAFA;
+    --text-secondary: #E5E5E5;
+    --text-muted: #525252;
+
+    --card-bg: #0F0F0F;
+    --card-border: #2A2A2A;
+
+    --sidebar-bg: #0F0F0F;
+
+    /* Accents */
+    --accent-primary: #CCFF00;
+    /* Acid Yellow */
+    --accent-secondary: #FF3300;
+    /* Safety Orange */
   }
 
-  .theme-sakura {
-    /* Sakura Theme (Formerly Default Pastel Glass) */
-    --bg-primary: linear-gradient(-45deg, #FFB6C1, #E6E6FA, #FFDAB9, #E0FFFF);
-    --text-primary: #1D1D1F;
-    --text-secondary: #4B5563;
-    --text-muted: #9CA3AF;
-    --card-bg: rgba(255, 255, 255, 0.6);
-    --card-border: rgba(255, 255, 255, 0.5);
-    --sidebar-bg: rgba(255, 255, 255, 0.3);
-    --accent-primary: #E6E6FA;
-    /* gta-purple */
-    --accent-secondary: #FFB6C1;
-    /* gta-pink */
+  /* Keep legacy themes as options, but update them slightly to fit structure if needed */
+  /* Keep legacy themes as options, but update them slightly to fit structure if needed */
+  body.theme-sakura {
+    --bg-primary: #FF1493;
+    /* Deep Pink */
+    --text-primary: #FFFFFF;
+    --text-secondary: #FFD1DC;
+    /* Pastel Pink */
+    --text-muted: #C71585;
+    /* Medium Violet Red */
+    --card-bg: #8B008B;
+    /* Dark Magenta */
+    --card-border: #FF69B4;
+    /* Hot Pink */
+    --sidebar-bg: #8B008B;
+    --accent-primary: #00FFFF;
+    /* Cyan contrast */
+    --accent-secondary: #FF00FF;
+    /* Magenta */
   }
 
-  .theme-midnight {
-
-    /* Midnight styling overrides */
-    ::selection {
-      background-color: var(--accent-primary);
-      /* Indigo selection */
-      color: white;
-    }
-
-    /* Midnight Theme (Neon/Dark) */
-    --bg-primary: linear-gradient(135deg, #0F172A, #1E1B4B, #312E81);
+  body.theme-midnight {
+    --bg-primary: #0F172A;
     --text-primary: #F8FAFC;
     --text-secondary: #CBD5E1;
     --text-muted: #64748B;
-    --card-bg: rgba(30, 41, 59, 0.7);
-    --card-border: rgba(148, 163, 184, 0.2);
-    --sidebar-bg: rgba(15, 23, 42, 0.6);
+    --card-bg: #1E293B;
+    --card-border: #334155;
+    --sidebar-bg: #0F172A;
     --accent-primary: #818CF8;
-    /* Indigo-400 */
     --accent-secondary: #F472B6;
-    /* Pink-400 */
   }
 
-  .theme-soft-paper {
-
-    /* Paper styling overrides */
-    ::selection {
-      background-color: #D6D3D1;
-      /* Stone selection */
-      color: #292524;
-    }
-
-    /* Soft Paper Theme (Warm/Classic) */
-    --bg-primary: #FDFBF7;
-    /* Warm off-white */
+  body.theme-soft-paper {
+    --bg-primary: #F5F5F4;
     --text-primary: #292524;
-    /* Stone-800 */
     --text-secondary: #57534E;
-    /* Stone-600 */
     --text-muted: #A8A29E;
     --card-bg: #FFFFFF;
     --card-border: #E7E5E4;
-    /* Stone-200 */
     --sidebar-bg: #F5F5F4;
-    /* Stone-100 */
     --accent-primary: #D6D3D1;
-    /* Stone-300 */
     --accent-secondary: #E7E5E4;
   }
 
+  body.theme-toxic {
+    --bg-primary: #39FF14 !important;
+    /* Neon Green */
+    --text-primary: #000000 !important;
+    --text-secondary: #1a1a1a !important;
+    --text-muted: #333333 !important;
+
+    --card-bg: #111111 !important;
+    /* Dark Black Card */
+    --card-border: #000000 !important;
+
+    --sidebar-bg: #39FF14 !important;
+
+    --accent-primary: #000000 !important;
+    /* Black Accents */
+    --accent-secondary: #FFFFFF !important;
+  }
+
+  body.theme-nuclear {
+    --bg-primary: #660000 !important;
+    /* Deep Blood Red */
+    --text-primary: #FFFFFF !important;
+    --text-secondary: #FFCCCC !important;
+    --text-muted: #FF6666 !important;
+
+    --card-bg: #000000 !important;
+    /* Pitch Black Card */
+    --card-border: #FF0000 !important;
+    /* Bright Red Border */
+
+    --sidebar-bg: #000000 !important;
+
+    --accent-primary: #FF0000 !important;
+    /* Bright Red */
+    --accent-secondary: #FFFFFF !important;
+  }
+
+  body.theme-entropy {
+    --bg-primary: #CCFF66 !important;
+    /* Fluorescent Matcha */
+    --text-primary: #000000 !important;
+    --text-secondary: #2F4F4F !important;
+    --text-muted: #556B2F !important;
+
+    --card-bg: #FFFFF0 !important;
+    /* Ivory Card */
+    --card-border: #FF1493 !important;
+    /* Hot Pink Border */
+
+    --sidebar-bg: #CCFF66 !important;
+
+    --accent-primary: #FF1493 !important;
+    /* Hot Pink Accent */
+    --accent-secondary: #000000 !important;
+  }
+
+  /* --- BODY & UTILS --- */
+
   body {
-    @apply text-primary font-sans antialiased overflow-x-hidden transition-colors duration-500;
-    background: var(--bg-primary);
-    background-size: 400% 400%;
+    @apply text-primary font-sans antialiased overflow-x-hidden;
+    background-color: var(--bg-primary);
     min-height: 100vh;
   }
 
-  /* Only animate gradient if it is a gradient (heuristically check or just leave it, single colors won't animate effectively but harmless) */
-  body:not(.theme-soft-paper) {
-    animation: gradient-xy 15s ease infinite;
+  /* Grid Background Effect for Marathon Theme */
+  body:not(.theme-sakura):not(.theme-soft-paper):not(.theme-midnight):not(.theme-toxic):not(.theme-nuclear):not(.theme-entropy) {
+    background-image:
+      linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+    background-size: 48px 48px;
+  }
+}
+
+/* Custom Utilities for Graphic Realism */
+@layer utilities {
+  .font-technical {
+    font-family: 'Space Mono', 'JetBrains Mono', monospace;
+  }
+
+  .chamfered {
+    clip-path: polygon(12px 0, 100% 0,
+        100% calc(100% - 12px), calc(100% - 12px) 100%,
+        0 100%, 0 12px);
+  }
+
+  .chamfered-sm {
+    clip-path: polygon(6px 0, 100% 0,
+        100% calc(100% - 6px), calc(100% - 6px) 100%,
+        0 100%, 0 6px);
+  }
+
+  /* Scanline effect */
+  .scanlines::before {
+    content: " ";
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
+    z-index: 2;
+    background-size: 100% 3px, 4px 100%;
+    pointer-events: none;
   }
 }

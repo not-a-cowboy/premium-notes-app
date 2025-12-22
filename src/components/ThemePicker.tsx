@@ -1,43 +1,54 @@
 import { useTheme } from '../context/ThemeContext';
-import { Check } from 'lucide-react';
+import { Power } from 'lucide-react';
 
 export function ThemePicker({ compact = false }) {
     const { theme, setTheme } = useTheme();
 
-    const themes: { id: import('../types').Theme; name: string; emoji: string; color: string }[] = [
-        { id: 'default', name: 'Neutral', emoji: '🏳️', color: '#f3f4f6' },
-        { id: 'sakura', name: 'Sakura', emoji: '🌸', color: 'linear-gradient(135deg, #FFB6C1, #E0FFFF)' },
-        { id: 'midnight', name: 'Midnight', emoji: '🌌', color: '#1E1B4B' },
-        { id: 'soft-paper', name: 'Journal', emoji: '📜', color: '#F5F5F4' },
+    const themes: { id: import('../types').Theme; name: string; code: string; color: string }[] = [
+        { id: 'default', name: 'MARATHON_MAIN', code: 'SYS_01', color: '#CCFF00' },
+        { id: 'sakura', name: 'NEON_PINK_OVR', code: 'P_VIBE', color: '#FF1493' },
+        { id: 'toxic', name: 'TOXIC_MODE', code: 'HAZARD', color: '#39FF14' },
+        { id: 'nuclear', name: 'NUCLEAR_MATTER', code: 'FUSION', color: '#D00000' },
+        { id: 'entropy', name: 'ENTROPY_DEIMOS', code: 'CHAOS', color: '#A7C957' },
     ];
 
     return (
-        <div className={`grid ${compact ? 'grid-cols-1 gap-2' : 'grid-cols-3 gap-3'}`}>
+        <div className={`grid ${compact ? 'grid-cols-1 gap-2' : 'grid-cols-2 gap-2'}`}>
             {themes.map((t) => (
                 <button
                     key={t.id}
                     onClick={() => setTheme(t.id)}
                     className={`
-                        relative group flex flex-col items-center justify-center p-3 rounded-xl transition-all duration-200 border
+                        relative flex items-center gap-3 p-3 transition-all duration-200 border group
                         ${theme === t.id
-                            ? 'bg-white shadow-md border-gta-purple scale-105'
-                            : 'bg-white/40 border-white/50 hover:bg-white/60 hover:scale-102'
+                            ? 'bg-m-gray/30 border-m-yellow text-m-white'
+                            : 'bg-transparent border-gray-800 text-gray-500 hover:border-gray-600 hover:text-gray-300'
                         }
                     `}
                 >
-                    <div
-                        className="w-10 h-10 rounded-full mb-2 flex items-center justify-center text-xl shadow-sm"
-                        style={{ background: t.color.includes('gradient') ? t.color : t.color }}
-                    >
-                        {t.emoji}
+                    <div className="relative">
+                        <div
+                            className={`w-3 h-3 ${theme === t.id ? 'animate-pulse' : ''}`}
+                            style={{ backgroundColor: t.color }}
+                        />
+                        {/* Selection Marker */}
+                        {theme === t.id && (
+                            <div className="absolute -inset-1 border border-white opacity-50" />
+                        )}
                     </div>
-                    <span className={`text-xs font-medium ${theme === t.id ? 'text-gray-900' : 'text-gray-600'}`}>
-                        {t.name}
-                    </span>
+
+                    <div className="flex flex-col items-start text-left">
+                        <span className={`text-[10px] font-black uppercase tracking-wider leading-none mb-1 ${theme === t.id ? 'text-m-yellow' : 'text-gray-500 group-hover:text-gray-400'}`}>
+                            {t.code}
+                        </span>
+                        <span className="text-[9px] font-mono leading-none">
+                            {t.name}
+                        </span>
+                    </div>
 
                     {theme === t.id && (
-                        <div className="absolute top-2 right-2 text-gta-purple">
-                            <Check size={14} />
+                        <div className="ml-auto text-m-yellow">
+                            <Power size={14} />
                         </div>
                     )}
                 </button>

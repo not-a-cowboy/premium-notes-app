@@ -11,4 +11,4 @@ export interface Note {
     updatedAt: string;
 }
 
-export type Theme = 'default' | 'sakura' | 'midnight' | 'soft-paper';
+export type Theme = 'default' | 'sakura' | 'midnight' | 'soft-paper' | 'toxic' | 'nuclear' | 'entropy';

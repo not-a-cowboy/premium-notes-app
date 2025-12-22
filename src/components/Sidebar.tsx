@@ -1,5 +1,5 @@
 import { motion, AnimatePresence } from 'framer-motion';
-import { Type, AlignLeft, AlignCenter, AlignRight, Palette, X, List, Image, Upload } from 'lucide-react';
+import { Type, AlignLeft, AlignCenter, AlignRight, Palette, X, List, Image, Upload, ChevronRight, Settings } from 'lucide-react';
 import { useRef, ChangeEvent } from 'react';
 import { ThemePicker } from './ThemePicker';
 
@@ -35,50 +35,58 @@ export function Sidebar({ isCollapsed, setIsCollapsed, fontFamily, setFontFamily
             {isCollapsed ? (
                 <motion.button
                     key="collapsed"
-                    initial={{ scale: 0, opacity: 0 }}
-                    animate={{ scale: 1, opacity: 1 }}
-                    exit={{ scale: 0, opacity: 0 }}
-                    whileHover={{ scale: 1.1 }}
-                    whileTap={{ scale: 0.9 }}
+                    initial={{ x: 100, opacity: 0 }}
+                    animate={{ x: 0, opacity: 1 }}
+                    exit={{ x: 100, opacity: 0 }}
                     onClick={() => setIsCollapsed(false)}
-                    className="fixed right-8 top-24 w-12 h-12 bg-white/60 backdrop-blur-md rounded-full shadow-lg border border-white/50 flex items-center justify-center text-gray-700 z-50"
+                    className="fixed right-0 top-32 w-12 h-16 bg-m-dark border-l-2 border-y-2 border-m-yellow flex items-center justify-center text-m-yellow z-40 hover:w-16 transition-all"
                 >
-                    <X size={20} />
+                    <Settings ref={(node) => {
+                        if (node) {
+                            node.style.setProperty("animation", "spin 10s linear infinite");
+                        }
+                    }} size={24} />
                 </motion.button>
             ) : (
                 <motion.div
                     key="expanded"
-                    initial={{ opacity: 0, x: 50, scale: 0.9 }}
-                    animate={{ opacity: 1, x: 0, scale: 1 }}
-                    exit={{ opacity: 0, x: 50, scale: 0.9 }}
+                    initial={{ x: 320, opacity: 0 }}
+                    animate={{ x: 0, opacity: 1 }}
+                    exit={{ x: 320, opacity: 0 }}
                     transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                    className="fixed right-8 top-24 bottom-8 w-80 bg-white/60 backdrop-blur-md rounded-3xl shadow-2xl border border-white/50 p-6 flex flex-col gap-6 z-50 overflow-y-auto"
+                    className="fixed right-0 top-16 bottom-0 w-80 bg-m-black border-l-2 border-m-gray z-40 flex flex-col"
                 >
-                    <h3 className="text-lg font-bold text-gray-900">Formatting</h3>
+                    {/* Header */}
+                    <div className="p-4 border-b border-m-gray flex justify-between items-center bg-m-dark/50">
+                        <h3 className="text-xl font-black uppercase text-white tracking-tighter">Tools // Config</h3>
+                        <button onClick={() => setIsCollapsed(true)} className="p-1 hover:bg-m-red hover:text-white text-gray-400 transition-colors">
+                            <ChevronRight size={24} />
+                        </button>
+                    </div>
 
-                    <div className="space-y-6">
+                    <div className="flex-1 overflow-y-auto p-6 space-y-8">
                         {/* Typography */}
-                        <div className="space-y-2">
-                            <div className="flex items-center gap-2 text-gray-700 font-medium">
-                                <Type size={18} />
-                                <span>Typography</span>
+                        <div className="space-y-4">
+                            <div className="flex items-center gap-2 text-m-blue font-bold uppercase text-xs tracking-widest border-b border-m-gray pb-2">
+                                <Type size={14} />
+                                <span>Typography_Set</span>
                             </div>
                             <div className="grid grid-cols-3 gap-2">
                                 <button
                                     onClick={() => setFontFamily('sans')}
-                                    className={`p-2 rounded-lg text-sm border transition-all ${fontFamily === 'sans' ? 'bg-gta-purple text-white border-transparent' : 'bg-white/40 border-white/50 hover:bg-white/60'} `}
+                                    className={`p-2 text-xs uppercase font-bold border transition-all ${fontFamily === 'sans' ? 'bg-m-yellow text-black border-m-yellow' : 'bg-transparent text-gray-400 border-m-gray hover:border-white hover:text-white'} `}
                                 >
                                     Sans
                                 </button>
                                 <button
                                     onClick={() => setFontFamily('serif')}
-                                    className={`p-2 rounded-lg text-sm border font-serif transition-all ${fontFamily === 'serif' ? 'bg-gta-purple text-white border-transparent' : 'bg-white/40 border-white/50 hover:bg-white/60'} `}
+                                    className={`p-2 text-xs uppercase font-bold border font-serif transition-all ${fontFamily === 'serif' ? 'bg-m-yellow text-black border-m-yellow' : 'bg-transparent text-gray-400 border-m-gray hover:border-white hover:text-white'} `}
                                 >
                                     Serif
                                 </button>
                                 <button
                                     onClick={() => setFontFamily('mono')}
-                                    className={`p-2 rounded-lg text-sm border font-mono transition-all ${fontFamily === 'mono' ? 'bg-gta-purple text-white border-transparent' : 'bg-white/40 border-white/50 hover:bg-white/60'} `}
+                                    className={`p-2 text-xs uppercase font-bold border font-mono transition-all ${fontFamily === 'mono' ? 'bg-m-yellow text-black border-m-yellow' : 'bg-transparent text-gray-400 border-m-gray hover:border-white hover:text-white'} `}
                                 >
                                     Mono
                                 </button>
@@ -86,55 +94,55 @@ export function Sidebar({ isCollapsed, setIsCollapsed, fontFamily, setFontFamily
                         </div>
 
                         {/* Alignment */}
-                        <div className="space-y-2">
-                            <h3 className="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-4">Alignment</h3>
-                            <div className="flex bg-gray-100 p-1 rounded-lg">
+                        <div className="space-y-4">
+                            <div className="flex items-center gap-2 text-m-blue font-bold uppercase text-xs tracking-widest border-b border-m-gray pb-2">
+                                <span>Text_Align</span>
+                            </div>
+                            <div className="flex border border-m-gray bg-transparent">
                                 {['left', 'center', 'right'].map((align) => (
                                     <button
                                         key={align}
                                         onClick={() => setTextAlign(align)}
-                                        className={`flex-1 p-2 rounded-md flex justify-center transition-all ${textAlign === align ? 'bg-white shadow-sm text-gta-purple' : 'text-gray-400 hover:text-gray-600'} `}
+                                        className={`flex-1 p-2 flex justify-center transition-all border-r last:border-r-0 border-m-gray ${textAlign === align ? 'bg-m-white text-black' : 'text-gray-500 hover:text-white'} `}
                                     >
-                                        {align === 'left' && <AlignLeft size={20} />}
-                                        {align === 'center' && <AlignCenter size={20} />}
-                                        {align === 'right' && <AlignRight size={20} />}
+                                        {align === 'left' && <AlignLeft size={18} />}
+                                        {align === 'center' && <AlignCenter size={18} />}
+                                        {align === 'right' && <AlignRight size={18} />}
                                     </button>
                                 ))}
                             </div>
                         </div>
 
                         {/* Theme Picker */}
-                        <div className="mb-8">
-                            <h3 className="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-4 flex items-center gap-2">
-                                <Palette size={14} /> Theme
-                            </h3>
+                        <div className="space-y-4">
+                            <div className="flex items-center gap-2 text-m-blue font-bold uppercase text-xs tracking-widest border-b border-m-gray pb-2">
+                                <Palette size={14} />
+                                <span>Visual_Theme</span>
+                            </div>
                             <ThemePicker />
                         </div>
 
-                        {/* Lists */}
-                        <div className="space-y-2">
-                            <h3 className="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-4">Insert</h3>
+                        {/* Insert Operations */}
+                        <div className="space-y-4">
+                            <div className="flex items-center gap-2 text-m-blue font-bold uppercase text-xs tracking-widest border-b border-m-gray pb-2">
+                                <Upload size={14} />
+                                <span>Data_Ingest</span>
+                            </div>
+
                             <button
                                 onClick={() => onInsertText('\n• ')}
-                                className="w-full p-3 rounded-xl bg-white/40 border border-white/50 hover:bg-white/60 transition-all text-left flex items-center gap-2 text-gray-700"
+                                className="w-full p-3 border border-m-gray hover:border-m-yellow hover:text-m-yellow transition-all text-left flex items-center gap-3 text-gray-400 group"
                             >
-                                <List size={18} />
-                                <span>Insert Bullet List</span>
+                                <List size={16} className="text-gray-600 group-hover:text-m-yellow" />
+                                <span className="text-xs font-bold uppercase">Insert List Node</span>
                             </button>
-                        </div>
 
-                        {/* Media / Upload */}
-                        <div className="space-y-2">
-                            <div className="flex items-center gap-2 text-gray-700 font-medium">
-                                <Image size={18} />
-                                <span>Media</span>
-                            </div>
                             <button
                                 onClick={() => fileInputRef.current?.click()}
-                                className="w-full p-3 rounded-xl bg-white/40 border border-white/50 hover:bg-white/60 transition-all text-left flex items-center gap-2 text-gray-700"
+                                className="w-full p-3 border border-m-gray hover:border-m-blue hover:text-m-blue transition-all text-left flex items-center gap-3 text-gray-400 group"
                             >
-                                <Upload size={18} />
-                                <span>Upload Text File</span>
+                                <Image size={16} className="text-gray-600 group-hover:text-m-blue" />
+                                <span className="text-xs font-bold uppercase">Import Text File</span>
                             </button>
                             <input
                                 type="file"
@@ -143,6 +151,12 @@ export function Sidebar({ isCollapsed, setIsCollapsed, fontFamily, setFontFamily
                                 accept=".txt,.md"
                                 className="hidden"
                             />
+                        </div>
+
+                        {/* Decorative Footer */}
+                        <div className="mt-auto pt-8 border-t border-m-gray opacity-50">
+                            <div className="h-4 w-full bg-[repeating-linear-gradient(45deg,transparent,transparent_5px,#333_5px,#333_10px)]" />
+                            <p className="text-[10px] text-gray-600 font-mono mt-2 text-center">SYS_READY</p>
                         </div>
                     </div>
                 </motion.div>

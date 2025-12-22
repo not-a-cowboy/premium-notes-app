@@ -1,5 +1,5 @@
 import { useRef, useState, useEffect } from 'react';
-import { Save, Eraser, RotateCcw, Trash2 } from 'lucide-react';
+import { Save, Eraser, RotateCcw, Trash2, X } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 interface DrawingCanvasProps {
@@ -12,11 +12,10 @@ export function DrawingCanvas({ initialData, onSave, onCancel }: DrawingCanvasPr
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const containerRef = useRef<HTMLDivElement>(null);
     const [isDrawing, setIsDrawing] = useState(false);
-    const [color, setColor] = useState("#000000");
+    const [color, setColor] = useState("#CCFF00"); // m-yellow default
     const [brushSize, setBrushSize] = useState(2);
     const [tool, setTool] = useState<'pen' | 'eraser'>('pen');
 
-    // History for Undo
     const [history, setHistory] = useState<string[]>([]);
     const [historyStep, setHistoryStep] = useState(0);
 
@@ -26,9 +25,8 @@ export function DrawingCanvas({ initialData, onSave, onCancel }: DrawingCanvasPr
         const container = containerRef.current;
         if (!canvas || !container) return;
 
-        // Set dimensions
         canvas.width = container.clientWidth;
-        canvas.height = 400; // Fixed height
+        canvas.height = 400;
 
         const ctx = canvas.getContext('2d');
         if (!ctx) return;
@@ -38,7 +36,6 @@ export function DrawingCanvas({ initialData, onSave, onCancel }: DrawingCanvasPr
         ctx.strokeStyle = color;
         ctx.lineWidth = brushSize;
 
-        // Load initial data
         if (initialData) {
             const img = new Image();
             img.src = initialData;
@@ -47,9 +44,6 @@ export function DrawingCanvas({ initialData, onSave, onCancel }: DrawingCanvasPr
                 saveHistory();
             };
         } else {
-            // White background default (optional, but good for saving)
-            // context.fillStyle = "white";
-            // context.fillRect(0, 0, canvas.width, canvas.height);
             saveHistory();
         }
     }, []);
@@ -61,8 +55,10 @@ export function DrawingCanvas({ initialData, onSave, onCancel }: DrawingCanvasPr
         const ctx = canvas.getContext('2d');
         if (!ctx) return;
 
-        ctx.strokeStyle = tool === 'eraser' ? '#ffffff' : color;
+        ctx.strokeStyle = tool === 'eraser' ? '#050505' : color; // Eraser paints background color (m-black)
         ctx.lineWidth = brushSize;
+        // With dark mode canvas, we usually want to paint "black" to erase if we don't have transparency layers
+        // Or globalCompositeOperation 'destination-out' for true transparency
         ctx.globalCompositeOperation = tool === 'eraser' ? 'destination-out' : 'source-over';
     }, [color, brushSize, tool]);
 
@@ -125,7 +121,6 @@ export function DrawingCanvas({ initialData, onSave, onCancel }: DrawingCanvasPr
     const saveHistory = () => {
         const canvas = canvasRef.current;
         if (!canvas) return;
-        // Slice history if we undid before drawing
         const newHistory = history.slice(0, historyStep + 1);
         newHistory.push(canvas.toDataURL());
         setHistory(newHistory);
@@ -166,7 +161,7 @@ export function DrawingCanvas({ initialData, onSave, onCancel }: DrawingCanvasPr
     };
 
     const colors = [
-        "#000000", "#EF4444", "#3B82F6", "#10B981", "#F59E0B", "#8B5CF6",
+        "#FAFAFA", "#CCFF00", "#00F0FF", "#FF3300", "#FF2A2A", "#8B5CF6"
     ];
 
     return (
@@ -174,65 +169,59 @@ export function DrawingCanvas({ initialData, onSave, onCancel }: DrawingCanvasPr
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.95 }}
-            className="flex flex-col gap-4 bg-white p-4 rounded-2xl shadow-xl border border-gray-200"
+            className="flex flex-col gap-0 bg-m-black border border-m-gray w-full max-w-3xl shadow-2xl font-mono text-m-white"
         >
+            {/* Header */}
+            <div className="p-3 border-b border-m-gray flex justify-between items-center bg-m-dark/50">
+                <h3 className="text-sm font-bold uppercase tracking-widest text-m-yellow">Schematic_Design_Tool</h3>
+                <button onClick={onCancel} className="text-gray-500 hover:text-white">
+                    <X size={18} />
+                </button>
+            </div>
+
             {/* Toolbar */}
-            <div className="flex flex-wrap items-center justify-between gap-4">
-                <div className="flex items-center gap-2">
+            <div className="p-3 bg-m-black border-b border-m-gray/50 flex flex-wrap items-center justify-between gap-4">
+                <div className="flex items-center gap-3">
                     {colors.map(c => (
                         <button
                             key={c}
                             onClick={() => { setColor(c); setTool('pen'); }}
-                            className={`w-8 h-8 rounded-full border-2 transition-transform hover:scale-110 ${color === c && tool === 'pen' ? 'border-gray-900 scale-110' : 'border-transparent'}`}
+                            className={`w-6 h-6 border transition-all hover:scale-110 ${color === c && tool === 'pen' ? 'border-white scale-110 shadow-[0_0_8px_rgba(255,255,255,0.5)]' : 'border-gray-600'}`}
                             style={{ backgroundColor: c }}
                             title={c}
                         />
                     ))}
-                    <div className="w-px h-8 bg-gray-200 mx-2" />
+                    <div className="w-px h-6 bg-gray-800 mx-1" />
                     <input
                         type="range"
                         min="1"
                         max="20"
                         value={brushSize}
                         onChange={(e) => setBrushSize(parseInt(e.target.value))}
-                        className="w-24 accent-gray-900"
-                        title="Brush Size"
+                        className="w-20 accent-m-yellow h-1 bg-gray-800 appearance-none rounded-none"
+                        title="Stroke Width"
                     />
                 </div>
 
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-1">
                     <button
                         onClick={() => setTool('eraser')}
-                        className={`p-2 rounded-lg transition-colors ${tool === 'eraser' ? 'bg-gray-200 text-black' : 'hover:bg-gray-100 text-gray-600'}`}
+                        className={`p-2 transition-colors border border-transparent ${tool === 'eraser' ? 'bg-m-white text-black' : 'hover:bg-gray-800 text-gray-400'}`}
                         title="Eraser"
                     >
-                        <Eraser size={20} />
+                        <Eraser size={18} />
                     </button>
-                    <button onClick={handleUndo} className="p-2 hover:bg-gray-100 rounded-lg text-gray-600" title="Undo" disabled={historyStep === 0}>
-                        <RotateCcw size={20} className={historyStep === 0 ? "opacity-30" : ""} />
+                    <button onClick={handleUndo} className="p-2 hover:bg-gray-800 text-gray-400" title="Undo" disabled={historyStep === 0}>
+                        <RotateCcw size={18} className={historyStep === 0 ? "opacity-30" : ""} />
                     </button>
-                    <button onClick={handleClear} className="p-2 hover:bg-gray-100 rounded-lg text-red-500" title="Clear All">
-                        <Trash2 size={20} />
-                    </button>
-                    <div className="w-px h-8 bg-gray-200 mx-2" />
-                    <button
-                        onClick={onCancel}
-                        className="px-4 py-2 hover:bg-gray-100 rounded-lg text-gray-600 font-medium text-sm transition-colors"
-                    >
-                        Cancel
-                    </button>
-                    <button
-                        onClick={handleSave}
-                        className="px-4 py-2 bg-gta-purple text-white rounded-lg font-medium text-sm hover:bg-gta-pink transition-colors shadow-lg shadow-purple-500/30 flex items-center gap-2"
-                    >
-                        <Save size={18} />
-                        Save Sketch
+                    <button onClick={handleClear} className="p-2 hover:bg-m-red hover:text-black text-m-red transition-colors ml-2" title="Clear All">
+                        <Trash2 size={18} />
                     </button>
                 </div>
             </div>
 
             {/* Canvas Area */}
-            <div ref={containerRef} className="border border-gray-100 rounded-xl overflow-hidden shadow-inner bg-white bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] [background-size:16px_16px] h-[400px] relative touch-none">
+            <div ref={containerRef} className="bg-[#0A0A0A] h-[400px] relative touch-none bg-[linear-gradient(to_right,#1a1a1a_1px,transparent_1px),linear-gradient(to_bottom,#1a1a1a_1px,transparent_1px)] bg-[size:20px_20px] cursor-crosshair">
                 <canvas
                     ref={canvasRef}
                     onMouseDown={startDrawing}
@@ -242,8 +231,25 @@ export function DrawingCanvas({ initialData, onSave, onCancel }: DrawingCanvasPr
                     onTouchStart={startDrawing}
                     onTouchMove={draw}
                     onTouchEnd={stopDrawing}
-                    className="absolute inset-0 cursor-crosshair"
+                    className="absolute inset-0"
                 />
+            </div>
+
+            {/* Footer Actions */}
+            <div className="p-3 border-t border-m-gray flex justify-end gap-3 bg-m-dark/50">
+                <button
+                    onClick={onCancel}
+                    className="px-6 py-2 text-xs font-bold uppercase tracking-wider text-gray-400 hover:text-white transition-colors"
+                >
+                    Discard
+                </button>
+                <button
+                    onClick={handleSave}
+                    className="px-6 py-2 bg-m-yellow text-black text-xs font-bold uppercase tracking-wider hover:bg-white transition-colors flex items-center gap-2"
+                >
+                    <Save size={14} />
+                    Save_Schematic
+                </button>
             </div>
         </motion.div>
     );

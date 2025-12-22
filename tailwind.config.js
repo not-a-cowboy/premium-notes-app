@@ -22,9 +22,24 @@ export default {
         'gta-purple': '#E6E6FA',
         'gta-orange': '#FFDAB9',
         'gta-teal': '#E0FFFF',
+
+        // Marathon / Graphic Realism Palette
+        'm-black': '#050505',
+        'm-dark': '#0F0F0F',
+        'm-gray': '#2A2A2A',
+        'm-light': '#E5E5E5',
+        'm-white': '#FAFAFA',
+        'm-yellow': '#CCFF00', // Acid
+        'm-orange': '#FF3300', // Safety
+        'm-blue': '#00F0FF',   // Cyan
+        'm-red': '#FF2A2A',
       },
       fontFamily: {
-        sans: ['Inter', 'sans-serif'],
+        'mono': ['Space Mono', 'JetBrains Mono', 'monospace'], // Technical feel
+        'sans': ['Inter', 'Roboto', 'sans-serif'], // Keep clean sans
+      },
+      backgroundImage: {
+        'grid-pattern': "linear-gradient(to right, #2a2a2a 1px, transparent 1px), linear-gradient(to bottom, #2a2a2a 1px, transparent 1px)",
       },
       boxShadow: {
         'subtle': '0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03)',

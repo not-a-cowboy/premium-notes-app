@@ -20,7 +20,7 @@ export function VoiceRecorder({ onRecordingComplete }: VoiceRecorderProps) {
     } = useSpeechRecognition();
 
     if (!browserSupportsSpeechRecognition) {
-        return null; // Or render a fallback/error
+        return null;
     }
 
     const startRecording = async () => {
@@ -38,13 +38,8 @@ export function VoiceRecorder({ onRecordingComplete }: VoiceRecorderProps) {
 
             mediaRecorder.onstop = () => {
                 const blob = new Blob(chunksRef.current, { type: 'audio/webm' });
-                // We'll pass the transcript immediately or after a slight delay?
-                // Transcript might still be finalizing.
-                // React-speech-recognition handles final results well.
                 onRecordingComplete(blob, transcript);
                 resetTranscript();
-
-                // Stop all tracks
                 stream.getTracks().forEach(track => track.stop());
             };
 
@@ -53,7 +48,7 @@ export function VoiceRecorder({ onRecordingComplete }: VoiceRecorderProps) {
             SpeechRecognition.startListening({ continuous: true });
         } catch (err) {
             console.error("Error accessing microphone:", err);
-            alert("Could not access microphone.");
+            alert("ERR: MIC_ACCESS_DENIED");
         }
     };
 
@@ -66,32 +61,56 @@ export function VoiceRecorder({ onRecordingComplete }: VoiceRecorderProps) {
     };
 
     return (
-        <div className="relative">
+        <div className="relative font-mono">
             <button
                 onClick={isRecording ? stopRecording : startRecording}
-                className={`flex items-center gap-2 p-3 rounded-full transition-all shadow-lg ${isRecording
-                    ? 'bg-red-500 text-white animate-pulse'
-                    : 'bg-gta-purple text-white hover:bg-gta-pink'
+                className={`flex items-center justify-center w-12 h-12 border-2 transition-all ${isRecording
+                    ? 'bg-m-red border-m-red text-black animate-pulse'
+                    : 'bg-transparent border-m-white text-m-white hover:border-m-red hover:text-m-red'
                     }`}
-                title={isRecording ? "Stop Recording" : "Start Voice Note"}
+                title={isRecording ? "STOP_RECORDING" : "INIT_VOICE_LOG"}
             >
-                {isRecording ? <Square size={24} fill="currentColor" /> : <Mic size={24} />}
+                {isRecording ? (
+                    <div className="flex flex-col items-center">
+                        <Square size={16} fill="currentColor" />
+                        <span className="text-[8px] font-black mt-1">REC</span>
+                    </div>
+                ) : (
+                    <Mic size={20} />
+                )}
             </button>
+
             <AnimatePresence>
                 {isRecording && (
                     <motion.div
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: 10 }}
-                        className="absolute bottom-full mb-4 right-0 bg-black/80 backdrop-blur text-white p-3 rounded-xl w-64 text-sm"
+                        initial={{ opacity: 0, x: 20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        exit={{ opacity: 0, x: 20 }}
+                        className="absolute bottom-full mb-4 right-0 bg-black border border-m-red text-m-white w-72 shadow-[0_0_20px_rgba(255,42,42,0.2)]"
                     >
-                        <div className="flex items-center gap-2 mb-1 text-gray-400 text-xs uppercase font-bold tracking-wider">
-                            <span className={`w-2 h-2 rounded-full ${listening ? 'bg-red-500 animate-ping' : 'bg-gray-500'}`} />
-                            {listening ? 'Listening...' : 'Processing...'}
+                        {/* Header */}
+                        <div className="flex items-center gap-2 px-3 py-1 bg-m-red/20 border-b border-m-red/50 text-m-red text-[10px] uppercase font-bold tracking-widest">
+                            <span className={`w-2 h-2 rounded-full ${listening ? 'bg-m-red animate-ping' : 'bg-gray-500'}`} />
+                            {listening ? 'AUDIO_INPUT_ACTIVE' : 'PROCESSING_BUFFER...'}
                         </div>
-                        <p className="line-clamp-3 italic">
-                            {transcript || "Speak now..."}
-                        </p>
+
+                        {/* Content */}
+                        <div className="p-3 text-xs leading-relaxed opacity-80 min-h-[60px]">
+                            {transcript ? (
+                                <>
+                                    <span className="text-m-red mr-2">&gt;&gt;</span>
+                                    {transcript}
+                                    <span className="animate-pulse inline-block w-2 h-4 bg-m-red ml-1 align-middle" />
+                                </>
+                            ) : (
+                                <span className="text-gray-600 italic">WAITING_FOR_INPUT...</span>
+                            )}
+                        </div>
+
+                        {/* Footer */}
+                        <div className="bg-m-red text-black text-[8px] px-2 py-0.5 font-bold text-right uppercase">
+                            WAVEFORM_ANALYSIS // ENCRYPTED
+                        </div>
                     </motion.div>
                 )}
             </AnimatePresence>

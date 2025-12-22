@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Search, FileText, Plus, Home, LucideIcon } from 'lucide-react';
+import { Search, FileText, Plus, Home, LucideIcon, Terminal, Command } from 'lucide-react';
 import { useNotes } from '../hooks/useNotes';
 import { Note } from '../types';
 
@@ -30,8 +30,8 @@ export function CommandPalette() {
 
     // Static actions
     const actions: ActionItem[] = [
-        { id: 'new', title: 'Create New Note', icon: Plus, action: () => navigate('/new') },
-        { id: 'home', title: 'Go Home', icon: Home, action: () => navigate('/') },
+        { id: 'new', title: 'Initialize New Record', icon: Plus, action: () => navigate('/new') },
+        { id: 'home', title: 'Return to Hub', icon: Home, action: () => navigate('/') },
     ];
 
     // Combine results: Actions first if no search, else Actions + Notes
@@ -88,71 +88,86 @@ export function CommandPalette() {
     return (
         <AnimatePresence>
             {isOpen && (
-                <div className="fixed inset-0 z-[100] flex items-start justify-center pt-[20vh] px-4">
+                <div className="fixed inset-0 z-[100] flex items-start justify-center pt-[15vh] px-4 font-mono">
                     <motion.div
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
                         onClick={() => setIsOpen(false)}
-                        className="absolute inset-0 bg-black/40 backdrop-blur-sm"
+                        className="absolute inset-0 bg-m-black/80 backdrop-blur-sm"
                     />
                     <motion.div
                         initial={{ opacity: 0, scale: 0.95, y: -20 }}
                         animate={{ opacity: 1, scale: 1, y: 0 }}
                         exit={{ opacity: 0, scale: 0.95, y: -20 }}
-                        transition={{ duration: 0.2 }}
-                        className="w-full max-w-lg bg-white/80 backdrop-blur-xl border border-white/50 shadow-2xl rounded-xl overflow-hidden relative z-10 flex flex-col"
+                        transition={{ duration: 0.1 }}
+                        className="w-full max-w-2xl bg-m-dark border-2 border-m-gray shadow-2xl relative z-10 flex flex-col clip-path-polygon"
                     >
-                        <div className="p-4 border-b border-gray-200/50 flex items-center gap-3">
-                            <Search className="text-gray-400" size={20} />
+                        {/* Header Decoration */}
+                        <div className="h-1 w-full bg-gradient-to-r from-m-yellow via-m-red to-m-blue" />
+
+                        <div className="p-4 border-b-2 border-m-gray flex items-center gap-4 bg-black/20">
+                            <Terminal className="text-m-yellow" size={24} />
                             <input
                                 autoFocus
                                 type="text"
-                                placeholder="Search notes or commands..."
+                                placeholder="EXECUTE_COMMAND..."
                                 value={search}
                                 onChange={(e) => {
                                     setSearch(e.target.value);
                                     setSelectedIndex(0);
                                 }}
-                                className="flex-1 bg-transparent border-none outline-none text-lg text-gray-800 placeholder-gray-400"
+                                className="flex-1 bg-transparent border-none outline-none text-xl text-m-white placeholder-gray-600 uppercase font-black tracking-tight"
                             />
                             <div className="flex gap-1">
-                                <span className="text-xs bg-gray-200 text-gray-500 px-1.5 py-0.5 rounded">esc</span>
+                                <span className="text-[10px] border border-gray-600 text-gray-500 px-1.5 py-0.5 uppercase">ESC_TO_CANCEL</span>
                             </div>
                         </div>
 
-                        <div className="max-h-[60vh] overflow-y-auto py-2">
+                        <div className="max-h-[60vh] overflow-y-auto py-0">
                             {results.length === 0 ? (
-                                <div className="p-4 text-center text-gray-500 text-sm">No results found.</div>
+                                <div className="p-8 text-center text-gray-500 text-xs uppercase tracking-widest border-l-4 border-red-500 bg-red-500/10 mx-4 my-4">
+                                    ERR: NO_MATCHING_RECORDS_FOUND
+                                </div>
                             ) : (
                                 results.map((item, index) => (
                                     <button
                                         key={item.id}
                                         onClick={() => handleSelect(item)}
-                                        className={`w-full text-left px-4 py-3 flex items-center gap-3 transition-colors ${index === selectedIndex ? 'bg-gta-purple/20 text-gta-purple' : 'hover:bg-gray-50 text-gray-700'}`}
+                                        className={`w-full text-left px-6 py-4 flex items-center gap-4 transition-all border-l-4 ${index === selectedIndex
+                                                ? 'bg-m-yellow text-black border-m-white'
+                                                : 'hover:bg-white/5 text-gray-400 border-transparent hover:border-gray-500'
+                                            }`}
                                     >
                                         {'icon' in item ? (
-                                            <item.icon size={18} className={index === selectedIndex ? "text-gta-purple" : "text-gray-400"} />
+                                            <item.icon size={20} className={index === selectedIndex ? "text-black" : "text-gray-500"} />
                                         ) : (
-                                            <FileText size={18} className={index === selectedIndex ? "text-gta-purple" : "text-gray-400"} />
+                                            <FileText size={20} className={index === selectedIndex ? "text-black" : "text-gray-500"} />
                                         )}
                                         <div className="flex-1 min-w-0">
-                                            <p className={`font-medium truncate ${index === selectedIndex ? "text-gray-900" : ""}`}>{item.title}</p>
+                                            <p className={`font-bold uppercase tracking-wider text-sm ${index === selectedIndex ? "text-black" : "text-m-white"}`}>
+                                                {item.title}
+                                            </p>
                                             {!('action' in item) && (
-                                                <p className="text-xs text-gray-400 truncate">{item.content}</p>
+                                                <p className={`text-[10px] font-mono mt-0.5 truncate ${index === selectedIndex ? "text-black/70" : "text-gray-600"}`}>
+                                                    ID_{item.id} // {item.content}
+                                                </p>
                                             )}
                                         </div>
                                         {index === selectedIndex && (
-                                            <span className="text-xs text-gta-purple font-medium">↵</span>
+                                            <span className="text-xs font-black uppercase tracking-widest text-black">ENTER ↵</span>
                                         )}
                                     </button>
                                 ))
                             )}
                         </div>
 
-                        <div className="bg-gray-50/50 p-2 border-t border-gray-100 text-[10px] text-gray-400 flex justify-end gap-3 px-4">
-                            <span>⇅ to navigate</span>
-                            <span>↵ to select</span>
+                        <div className="bg-m-black p-2 border-t border-m-gray text-[10px] text-gray-500 flex justify-between px-4 font-mono uppercase">
+                            <span>SYS_READY // v4.2</span>
+                            <div className="flex gap-4">
+                                <span>⇅ NAVIGATE</span>
+                                <span>↵ SELECT</span>
+                            </div>
                         </div>
                     </motion.div>
                 </div>
