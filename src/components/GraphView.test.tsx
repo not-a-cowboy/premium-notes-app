@@ -2,7 +2,7 @@ import { render, screen } from '@testing-library/react';
 import { GraphView } from './GraphView';
 import { Note } from '../types';
 import { BrowserRouter } from 'react-router-dom';
-import { vi } from 'vitest';
+import { vi, describe, it, expect } from 'vitest';
 
 // Mock react-force-graph-2d because it uses Canvas which is hard to test in jsdom
 vi.mock('react-force-graph-2d', () => ({

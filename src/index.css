@@ -49,107 +49,18 @@
     /* Acid Yellow */
     --accent-secondary: #FF3300;
     /* Safety Orange */
-  }
 
-  /* Keep legacy themes as options, but update them slightly to fit structure if needed */
-  /* Keep legacy themes as options, but update them slightly to fit structure if needed */
-  body.theme-sakura {
-    --bg-primary: #FF1493;
-    /* Deep Pink */
-    --text-primary: #FFFFFF;
-    --text-secondary: #FFD1DC;
-    /* Pastel Pink */
-    --text-muted: #C71585;
-    /* Medium Violet Red */
-    --card-bg: #8B008B;
-    /* Dark Magenta */
-    --card-border: #FF69B4;
-    /* Hot Pink */
-    --sidebar-bg: #8B008B;
-    --accent-primary: #00FFFF;
-    /* Cyan contrast */
-    --accent-secondary: #FF00FF;
-    /* Magenta */
-  }
+    /* Component Specific Defaults (Marathon) */
+    --logo-text: #FAFAFA;
+    --subtitle-text: #CCFF00;
 
-  body.theme-midnight {
-    --bg-primary: #0F172A;
-    --text-primary: #F8FAFC;
-    --text-secondary: #CBD5E1;
-    --text-muted: #64748B;
-    --card-bg: #1E293B;
-    --card-border: #334155;
-    --sidebar-bg: #0F172A;
-    --accent-primary: #818CF8;
-    --accent-secondary: #F472B6;
-  }
+    --nav-input-bg: #050505;
+    --nav-input-border: #2A2A2A;
+    --nav-input-text: #FFFFFF;
 
-  body.theme-soft-paper {
-    --bg-primary: #F5F5F4;
-    --text-primary: #292524;
-    --text-secondary: #57534E;
-    --text-muted: #A8A29E;
-    --card-bg: #FFFFFF;
-    --card-border: #E7E5E4;
-    --sidebar-bg: #F5F5F4;
-    --accent-primary: #D6D3D1;
-    --accent-secondary: #E7E5E4;
-  }
-
-  body.theme-toxic {
-    --bg-primary: #39FF14 !important;
-    /* Neon Green */
-    --text-primary: #000000 !important;
-    --text-secondary: #1a1a1a !important;
-    --text-muted: #333333 !important;
-
-    --card-bg: #111111 !important;
-    /* Dark Black Card */
-    --card-border: #000000 !important;
-
-    --sidebar-bg: #39FF14 !important;
-
-    --accent-primary: #000000 !important;
-    /* Black Accents */
-    --accent-secondary: #FFFFFF !important;
-  }
-
-  body.theme-nuclear {
-    --bg-primary: #660000 !important;
-    /* Deep Blood Red */
-    --text-primary: #FFFFFF !important;
-    --text-secondary: #FFCCCC !important;
-    --text-muted: #FF6666 !important;
-
-    --card-bg: #000000 !important;
-    /* Pitch Black Card */
-    --card-border: #FF0000 !important;
-    /* Bright Red Border */
-
-    --sidebar-bg: #000000 !important;
-
-    --accent-primary: #FF0000 !important;
-    /* Bright Red */
-    --accent-secondary: #FFFFFF !important;
-  }
-
-  body.theme-entropy {
-    --bg-primary: #CCFF66 !important;
-    /* Fluorescent Matcha */
-    --text-primary: #000000 !important;
-    --text-secondary: #2F4F4F !important;
-    --text-muted: #556B2F !important;
-
-    --card-bg: #FFFFF0 !important;
-    /* Ivory Card */
-    --card-border: #FF1493 !important;
-    /* Hot Pink Border */
-
-    --sidebar-bg: #CCFF66 !important;
-
-    --accent-primary: #FF1493 !important;
-    /* Hot Pink Accent */
-    --accent-secondary: #000000 !important;
+    --btn-add-bg: var(--accent-primary);
+    --btn-add-border: #000000;
+    --btn-add-icon: #000000;
   }
 
   /* --- BODY & UTILS --- */
@@ -167,6 +78,164 @@
       linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
     background-size: 48px 48px;
   }
+}
+
+/* --- THEME DEFINITIONS (Moved outside layer to ensure they are not purged) --- */
+
+:root.theme-sakura {
+  --bg-primary: #FF1493;
+  --text-primary: #FFFFFF;
+  --text-secondary: #FFD1DC;
+  --text-muted: #C71585;
+  --card-bg: #8B008B;
+  --card-border: #FF69B4;
+  --sidebar-bg: #8B008B;
+  --accent-primary: #00FFFF;
+  --accent-secondary: #FF00FF;
+
+  --logo-text: #FFFFFF;
+  --subtitle-text: #FFD1DC;
+  --nav-input-bg: #8B008B;
+  --nav-input-border: #FF69B4;
+  --nav-input-text: #FFFFFF;
+  --btn-add-bg: #00FFFF;
+  --btn-add-border: #FFFFFF;
+  --btn-add-icon: #FF1493;
+}
+
+:root.theme-midnight {
+  --bg-primary: #0F172A;
+  --text-primary: #F8FAFC;
+  --text-secondary: #CBD5E1;
+  --text-muted: #64748B;
+  --card-bg: #1E293B;
+  --card-border: #334155;
+  --sidebar-bg: #0F172A;
+  --accent-primary: #818CF8;
+  --accent-secondary: #F472B6;
+
+  --logo-text: #F8FAFC;
+  --subtitle-text: #818CF8;
+  --nav-input-bg: #1E293B;
+  --nav-input-border: #334155;
+  --nav-input-text: #F8FAFC;
+  --btn-add-bg: #818CF8;
+  --btn-add-border: #FFFFFF;
+  --btn-add-icon: #0F172A;
+}
+
+:root.theme-soft-paper {
+  --bg-primary: #F5F5F4;
+  --text-primary: #292524;
+  --text-secondary: #57534E;
+  --text-muted: #A8A29E;
+  --card-bg: #FFFFFF;
+  --card-border: #E7E5E4;
+  --sidebar-bg: #F5F5F4;
+  --accent-primary: #D6D3D1;
+  --accent-secondary: #E7E5E4;
+
+  --logo-text: #292524;
+  --subtitle-text: #57534E;
+  --nav-input-bg: #FFFFFF;
+  --nav-input-border: #E7E5E4;
+  --nav-input-text: #292524;
+  --btn-add-bg: #D6D3D1;
+  --btn-add-border: #A8A29E;
+  --btn-add-icon: #292524;
+}
+
+:root.theme-toxic {
+  /* HAZARD Theme */
+  --bg-primary: #39FF14 !important;
+  /* Neon Green */
+  --text-primary: #FFFFFF !important;
+  /* White note text per request */
+  --text-secondary: #FFFFFF !important;
+  --text-muted: #333333 !important;
+  --card-bg: #111111 !important;
+  --card-border: #000000 !important;
+  --sidebar-bg: #39FF14 !important;
+  --accent-primary: #000000 !important;
+  --accent-secondary: #FFFFFF !important;
+
+  /* Specific Overrides */
+  --logo-text: #000000;
+  /* Legibility on Green */
+  --subtitle-text: #1a1a1a;
+
+  --nav-input-bg: #111111;
+  --nav-input-border: #000000;
+  --nav-input-text: #FFFFFF;
+
+  --btn-add-bg: #000000;
+  /* Matches accent */
+  --btn-add-border: #FFFFFF;
+  /* White border */
+  --btn-add-icon: #FFFFFF;
+  /* White + */
+}
+
+:root.theme-nuclear {
+  /* FUSION Theme */
+  --bg-primary: #660000 !important;
+  --text-primary: #FFFFFF !important;
+  --text-secondary: #FFCCCC !important;
+  --text-muted: #FF6666 !important;
+  --card-bg: #000000 !important;
+  --card-border: #FF0000 !important;
+  --sidebar-bg: #000000 !important;
+  --accent-primary: #FF0000 !important;
+  --accent-secondary: #FFFFFF !important;
+
+  /* Specific Overrides */
+  --logo-text: #FFFFFF;
+  --subtitle-text: #FF0000;
+
+  --nav-input-bg: #FFFFFF;
+  /* White background */
+  --nav-input-border: #FF0000;
+  /* Red outline */
+  --nav-input-text: #FF0000;
+  /* Red text */
+
+  --btn-add-bg: #FFFFFF;
+  /* White background */
+  --btn-add-border: #FF0000;
+  /* Red outline */
+  --btn-add-icon: #FF0000;
+  /* Red + */
+}
+
+:root.theme-entropy {
+  /* CHAOS Theme */
+  --bg-primary: #CCFF66 !important;
+  /* Fluorescent Matcha */
+  --text-primary: #000000 !important;
+  --text-secondary: #2F4F4F !important;
+  --text-muted: #556B2F !important;
+  --card-bg: #FFFFF0 !important;
+  --card-border: #FF1493 !important;
+  --sidebar-bg: #CCFF66 !important;
+  --accent-primary: #FF1493 !important;
+  /* Pink */
+  --accent-secondary: #000000 !important;
+
+  /* Specific Overrides */
+  --logo-text: #FF1493;
+  /* Pink Title */
+  --subtitle-text: #FF1493;
+  /* Match title */
+
+  --nav-input-bg: #FFFFF0;
+  --nav-input-border: #FF1493;
+  /* Pink border */
+  --nav-input-text: #FF1493;
+  /* Pink text */
+
+  --btn-add-bg: #FF1493;
+  --btn-add-border: #000000;
+  --btn-add-icon: #CCFF66;
 }
 
 /* Custom Utilities for Graphic Realism */

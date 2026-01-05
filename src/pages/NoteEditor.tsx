@@ -1,12 +1,15 @@
 import { useState, useEffect, useRef, Dispatch, SetStateAction, ChangeEvent } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { useNotes } from '../hooks/useNotes';
 import { Sidebar } from '../components/Sidebar';
 import { AIAssistant } from '../components/AIAssistant';
 import { VoiceRecorder } from '../components/VoiceRecorder';
 import { DrawingCanvas } from '../components/DrawingCanvas';
+import { ExportService } from '../services/export';
+import { PinPrompt } from '../components/PinPrompt';
+import { AnalyticsDashboard } from '../components/AnalyticsDashboard';
 
-import { ArrowLeft, Maximize2, Minimize2, PenTool, Save, Terminal } from 'lucide-react';
+import { ArrowLeft, Maximize2, Minimize2, PenTool, Save, Lock, Unlock, Download } from 'lucide-react';
 import { AnimatePresence, motion } from 'framer-motion';
 
 export function NoteEditor() {
@@ -27,6 +30,45 @@ export function NoteEditor() {
     const [saving, setSaving] = useState(false);
     const [isZenMode, setIsZenMode] = useState(false);
     const [isSketching, setIsSketching] = useState(false);
+    const [showLockPrompt, setShowLockPrompt] = useState(false);
+    const [showAnalytics, setShowAnalytics] = useState(false);
+
+    // Check for encryption key passed via navigation (if unlocking from grid)
+    const location = useLocation();
+    // @ts-ignore
+    const passedKey = location.state?.encryptionKey as string | undefined;
+
+    const [decryptedContent, setDecryptedContent] = useState<string | null>(null);
+
+    // Effect to handle decryption on load if locked
+    useEffect(() => {
+        if (foundNote?.isLocked && !decryptedContent) {
+            if (passedKey) {
+                import('../services/encryption').then(mod => {
+                    const res = mod.EncryptionService.decrypt(foundNote.content, passedKey);
+                    if (res) {
+                        setDecryptedContent(res);
+                        setContent(res);
+                    }
+                });
+            } else {
+                // If no key passed but locked, we might need to prompt? 
+                // Or assume Grid handles it. But deep linking?
+                // For now, assume Grid handled it or we show locked state.
+                setContent("LOCKED CONTENT");
+            }
+        }
+    }, [foundNote, passedKey]);
+
+    const handleLock = async (pin: string) => {
+        const mod = await import('../services/encryption');
+        const encrypted = mod.EncryptionService.encrypt(content, pin);
+        if (id) {
+            await updateNote(parseInt(id), { content: encrypted, isLocked: true });
+            setShowLockPrompt(false);
+            navigate('/'); // Go back to grid to verify lock
+        }
+    };
 
     const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
     const [fontFamily, setFontFamily] = useState('sans');
@@ -161,7 +203,26 @@ export function NoteEditor() {
                                 )}
                             </div>
 
+
+
                             <div className="flex items-center gap-2">
+                                <button
+                                    onClick={() => {
+                                        if (foundNote?.isLocked) {
+                                            // Handle unlocking logic if needed, but usually we unlock before entering.
+                                            // Maybe allow removing lock?
+                                            // For now, simpler: Just allow locking unlocked notes.
+                                            alert("Note is already locked.");
+                                        } else {
+                                            setShowLockPrompt(true);
+                                        }
+                                    }}
+                                    className={`p-2 rounded-sm transition-colors ${foundNote?.isLocked ? 'text-m-red' : 'text-gray-400 hover:text-white'}`}
+                                    title={foundNote?.isLocked ? "Locked" : "Lock Note"}
+                                >
+                                    {foundNote?.isLocked ? <Lock size={20} /> : <Unlock size={20} />}
+                                </button>
+
                                 <AIAssistant
                                     content={content}
                                     onSummarize={handleSummarize}
@@ -198,6 +259,14 @@ export function NoteEditor() {
                                 </button>
 
                                 <button
+                                    onClick={() => ExportService.exportToPDF('note-export-container', title || 'note')}
+                                    className="p-2 hover:bg-m-blue hover:text-black rounded-sm text-gray-400 transition-colors"
+                                    title="Export PDF"
+                                >
+                                    <Download size={20} />
+                                </button>
+
+                                <button
                                     onClick={handleSave}
                                     className="p-2 hover:bg-m-yellow hover:text-black rounded-sm text-gray-400 transition-colors"
                                     title="Save Note"
@@ -209,7 +278,7 @@ export function NoteEditor() {
                     )}
                 </AnimatePresence>
 
-                <main className="flex-1 overflow-y-auto p-8 md:p-12 relative" onClick={() => setIsSidebarCollapsed(true)}>
+                <main id="note-export-container" className="flex-1 overflow-y-auto p-8 md:p-12 relative" onClick={() => setIsSidebarCollapsed(true)}>
                     {/* Editor Background Grid */}
                     <div className="absolute inset-0 opacity-10 pointer-events-none"
                         style={{
@@ -280,17 +349,26 @@ export function NoteEditor() {
                 )}
             </AnimatePresence>
 
-            {!isZenMode && (
-                <Sidebar
-                    isCollapsed={isSidebarCollapsed}
-                    setIsCollapsed={setIsSidebarCollapsed}
-                    fontFamily={fontFamily}
-                    setFontFamily={setFontFamily}
-                    textAlign={textAlign}
-                    setTextAlign={setTextAlign}
-                    onInsertText={(text) => updateState(setContent, (prev) => prev + text)}
-                />
-            )}
+            {
+                !isZenMode && (
+                    <Sidebar
+                        isCollapsed={isSidebarCollapsed}
+                        setIsCollapsed={setIsSidebarCollapsed}
+                        fontFamily={fontFamily}
+                        setFontFamily={setFontFamily}
+                        textAlign={textAlign}
+                        setTextAlign={setTextAlign}
+                        onInsertText={(text) => updateState(setContent, (prev) => prev + text)}
+                        onOpenAnalytics={() => setShowAnalytics(true)}
+                    />
+                )
+            }
+
+            <AnimatePresence>
+                {showAnalytics && (
+                    <AnalyticsDashboard onClose={() => setShowAnalytics(false)} />
+                )}
+            </AnimatePresence>
 
             <AnimatePresence>
                 {isSketching && (
@@ -305,6 +383,14 @@ export function NoteEditor() {
                     </div>
                 )}
             </AnimatePresence>
+
+            <PinPrompt
+                isOpen={showLockPrompt}
+                onClose={() => setShowLockPrompt(false)}
+                onSuccess={handleLock}
+                mode="setup"
+                title="Lock Note"
+            />
         </div >
     );
 }

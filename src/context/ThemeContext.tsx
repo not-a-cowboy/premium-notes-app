@@ -26,13 +26,10 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
     });
 
     useEffect(() => {
-        const root = document.body;
-        // Remove all previous theme classes
-        root.classList.forEach(cls => {
-            if (cls.startsWith('theme-')) {
-                root.classList.remove(cls);
-            }
-        });
+        const root = document.documentElement;
+        // Remove all previous theme classes safely
+        const classesToRemove = Array.from(root.classList).filter(cls => cls.startsWith('theme-'));
+        classesToRemove.forEach(cls => root.classList.remove(cls));
 
         if (theme !== 'default') {
             root.classList.add(`theme-${theme}`);

@@ -169,18 +169,18 @@ export function DrawingCanvas({ initialData, onSave, onCancel }: DrawingCanvasPr
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.95 }}
-            className="flex flex-col gap-0 bg-m-black border border-m-gray w-full max-w-3xl shadow-2xl font-mono text-m-white"
+            className="flex flex-col gap-0 bg-[var(--card-bg)] border border-[var(--card-border)] w-full max-w-3xl shadow-2xl font-mono text-[var(--text-primary)]"
         >
             {/* Header */}
-            <div className="p-3 border-b border-m-gray flex justify-between items-center bg-m-dark/50">
-                <h3 className="text-sm font-bold uppercase tracking-widest text-m-yellow">Schematic_Design_Tool</h3>
-                <button onClick={onCancel} className="text-gray-500 hover:text-white">
+            <div className="p-3 border-b border-[var(--card-border)] flex justify-between items-center bg-[var(--bg-primary)]/50">
+                <h3 className="text-sm font-bold uppercase tracking-widest text-[var(--accent-primary)]">Schematic_Design_Tool</h3>
+                <button onClick={onCancel} className="text-[var(--text-muted)] hover:text-[var(--text-primary)]">
                     <X size={18} />
                 </button>
             </div>
 
             {/* Toolbar */}
-            <div className="p-3 bg-m-black border-b border-m-gray/50 flex flex-wrap items-center justify-between gap-4">
+            <div className="p-3 bg-[var(--card-bg)] border-b border-[var(--card-border)]/50 flex flex-wrap items-center justify-between gap-4">
                 <div className="flex items-center gap-3">
                     {colors.map(c => (
                         <button
@@ -191,14 +191,14 @@ export function DrawingCanvas({ initialData, onSave, onCancel }: DrawingCanvasPr
                             title={c}
                         />
                     ))}
-                    <div className="w-px h-6 bg-gray-800 mx-1" />
+                    <div className="w-px h-6 bg-[var(--card-border)] mx-1" />
                     <input
                         type="range"
                         min="1"
                         max="20"
                         value={brushSize}
                         onChange={(e) => setBrushSize(parseInt(e.target.value))}
-                        className="w-20 accent-m-yellow h-1 bg-gray-800 appearance-none rounded-none"
+                        className="w-20 accent-[var(--accent-primary)] h-1 bg-[var(--card-border)] appearance-none rounded-none"
                         title="Stroke Width"
                     />
                 </div>
@@ -206,15 +206,15 @@ export function DrawingCanvas({ initialData, onSave, onCancel }: DrawingCanvasPr
                 <div className="flex items-center gap-1">
                     <button
                         onClick={() => setTool('eraser')}
-                        className={`p-2 transition-colors border border-transparent ${tool === 'eraser' ? 'bg-m-white text-black' : 'hover:bg-gray-800 text-gray-400'}`}
+                        className={`p-2 transition-colors border border-transparent ${tool === 'eraser' ? 'bg-[var(--text-primary)] text-black' : 'hover:bg-[var(--card-border)] text-[var(--text-muted)]'}`}
                         title="Eraser"
                     >
                         <Eraser size={18} />
                     </button>
-                    <button onClick={handleUndo} className="p-2 hover:bg-gray-800 text-gray-400" title="Undo" disabled={historyStep === 0}>
+                    <button onClick={handleUndo} className="p-2 hover:bg-[var(--card-border)] text-[var(--text-muted)]" title="Undo" disabled={historyStep === 0}>
                         <RotateCcw size={18} className={historyStep === 0 ? "opacity-30" : ""} />
                     </button>
-                    <button onClick={handleClear} className="p-2 hover:bg-m-red hover:text-black text-m-red transition-colors ml-2" title="Clear All">
+                    <button onClick={handleClear} className="p-2 hover:bg-[var(--accent-secondary)] hover:text-black text-[var(--accent-secondary)] transition-colors ml-2" title="Clear All">
                         <Trash2 size={18} />
                     </button>
                 </div>
@@ -236,16 +236,16 @@ export function DrawingCanvas({ initialData, onSave, onCancel }: DrawingCanvasPr
             </div>
 
             {/* Footer Actions */}
-            <div className="p-3 border-t border-m-gray flex justify-end gap-3 bg-m-dark/50">
+            <div className="p-3 border-t border-[var(--card-border)] flex justify-end gap-3 bg-[var(--bg-primary)]/50">
                 <button
                     onClick={onCancel}
-                    className="px-6 py-2 text-xs font-bold uppercase tracking-wider text-gray-400 hover:text-white transition-colors"
+                    className="px-6 py-2 text-xs font-bold uppercase tracking-wider text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors"
                 >
                     Discard
                 </button>
                 <button
                     onClick={handleSave}
-                    className="px-6 py-2 bg-m-yellow text-black text-xs font-bold uppercase tracking-wider hover:bg-white transition-colors flex items-center gap-2"
+                    className="px-6 py-2 bg-[var(--accent-primary)] text-black text-xs font-bold uppercase tracking-wider hover:bg-white transition-colors flex items-center gap-2"
                 >
                     <Save size={14} />
                     Save_Schematic

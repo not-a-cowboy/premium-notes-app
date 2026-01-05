@@ -7,6 +7,7 @@ export interface Note {
     tags?: string[];
     audioRecordings?: Blob[];
     sketchData?: string;
+    isLocked?: boolean;
     date?: string;
     updatedAt: string;
 }

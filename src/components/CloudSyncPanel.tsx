@@ -21,18 +21,18 @@ export function CloudSyncPanel() {
     };
 
     return (
-        <div className="p-4 bg-gray-50 dark:bg-gray-800/50 rounded-xl border border-gray-200 dark:border-gray-700">
+        <div className="p-4 bg-[var(--card-bg)] rounded-xl border border-[var(--card-border)]">
             <div className="flex items-center justify-between mb-2">
-                <div className="flex items-center gap-2 text-gray-700 dark:text-gray-300 font-medium">
-                    <Cloud size={20} className="text-gta-purple" />
+                <div className="flex items-center gap-2 text-[var(--text-primary)] font-medium">
+                    <Cloud size={20} className="text-[var(--accent-primary)]" />
                     <span>Cloud Sync</span>
                 </div>
-                <div className="text-xs text-gray-500">
+                <div className="text-xs text-[var(--text-secondary)]">
                     {lastSynced ? `Last synced: ${lastSynced}` : 'Not synced yet'}
                 </div>
             </div>
 
-            <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
+            <p className="text-sm text-[var(--text-muted)] mb-4">
                 Sync your notes across devices safely with end-to-end encryption.
             </p>
 
@@ -40,8 +40,8 @@ export function CloudSyncPanel() {
                 onClick={handleSync}
                 disabled={status === 'syncing' || status === 'synced'}
                 className={`w-full py-2 rounded-lg font-medium text-sm flex items-center justify-center gap-2 transition-all ${status === 'synced'
-                    ? 'bg-green-100 text-green-700 border border-green-200'
-                    : 'bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-200'
+                    ? 'bg-[var(--accent-primary)]/20 text-[var(--accent-primary)] border border-[var(--accent-primary)]/50'
+                    : 'bg-[var(--bg-primary)] border border-[var(--card-border)] hover:bg-[var(--card-border)]/50 text-[var(--text-primary)]'
                     }`}
             >
                 {status === 'idle' && (

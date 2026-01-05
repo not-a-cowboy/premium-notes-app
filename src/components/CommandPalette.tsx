@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Search, FileText, Plus, Home, LucideIcon, Terminal, Command } from 'lucide-react';
+import { FileText, Plus, Home, LucideIcon, Terminal, Download } from 'lucide-react';
 import { useNotes } from '../hooks/useNotes';
 import { Note } from '../types';
+import { ExportService } from '../services/export';
 
 interface ActionItem {
     id: string;
@@ -32,6 +33,7 @@ export function CommandPalette() {
     const actions: ActionItem[] = [
         { id: 'new', title: 'Initialize New Record', icon: Plus, action: () => navigate('/new') },
         { id: 'home', title: 'Return to Hub', icon: Home, action: () => navigate('/') },
+        { id: 'export-zip', title: 'Export All (Backup)', icon: Download, action: () => ExportService.exportAllToZip(notes) },
     ];
 
     // Combine results: Actions first if no search, else Actions + Notes
@@ -135,8 +137,8 @@ export function CommandPalette() {
                                         key={item.id}
                                         onClick={() => handleSelect(item)}
                                         className={`w-full text-left px-6 py-4 flex items-center gap-4 transition-all border-l-4 ${index === selectedIndex
-                                                ? 'bg-m-yellow text-black border-m-white'
-                                                : 'hover:bg-white/5 text-gray-400 border-transparent hover:border-gray-500'
+                                            ? 'bg-m-yellow text-black border-m-white'
+                                            : 'hover:bg-white/5 text-gray-400 border-transparent hover:border-gray-500'
                                             }`}
                                     >
                                         {'icon' in item ? (

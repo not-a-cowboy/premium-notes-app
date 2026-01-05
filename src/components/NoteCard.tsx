@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Trash2, Check, Pin, FileText, Activity } from 'lucide-react';
+import { Trash2, Check, Pin, Activity } from 'lucide-react';
 import { Note } from '../types';
 
 interface NoteCardProps {
@@ -38,7 +38,7 @@ export function NoteCard({ note, onDelete, onTogglePin, onClick }: NoteCardProps
             onClick={onClick}
             className={`
                 relative group p-0 cursor-pointer 
-                flex flex-col h-64
+                flex flex-col h-fit min-h-[160px]
                 ${note.isPinned
                     ? 'border-2 border-[var(--accent-primary)] bg-[var(--card-bg)]'
                     : 'border border-[var(--card-border)] bg-[var(--card-bg)] hover:border-[var(--text-primary)]'
@@ -47,7 +47,7 @@ export function NoteCard({ note, onDelete, onTogglePin, onClick }: NoteCardProps
             `}
         >
             {/* Chamfered visual hack (optional, or use clip-path on container) */}
-            <div className="absolute top-0 right-0 w-8 h-8 bg-m-yellow clip-polygon hidden" />
+            <div className="absolute top-0 right-0 w-8 h-8 bg-[var(--accent-primary)] clip-polygon hidden" />
 
             {/* Header Strip */}
             <div className="flex justify-between items-center p-3 border-b border-[var(--card-border)] bg-black/20">
@@ -74,12 +74,12 @@ export function NoteCard({ note, onDelete, onTogglePin, onClick }: NoteCardProps
                     }}
                 />
 
-                <h3 className={`text-xl font-bold uppercase mb-3 line-clamp-1 font-display tracking-tight ${note.isPinned ? 'text-[var(--accent-primary)]' : 'text-[var(--text-primary)]'}`}>
+                <h3 className={`text-xl font-bold uppercase mb-3 line-clamp-2 font-display tracking-tight ${note.isPinned ? 'text-[var(--accent-primary)]' : 'text-[var(--text-primary)]'}`}>
                     {note.title || 'UNTITLED_RECORD'}
                 </h3>
 
-                <p className="text-[var(--text-secondary)] text-xs font-mono leading-relaxed line-clamp-5">
-                    {note.content || 'NO_DATA_AVAILABLE...'}
+                <p className="text-[var(--text-secondary)] text-xs font-mono leading-relaxed line-clamp-[12]">
+                    {note.isLocked ? '*** ENCRYPTED CONTENT ***' : (note.content || 'NO_DATA_AVAILABLE...')}
                 </p>
             </div>
 
@@ -99,7 +99,7 @@ export function NoteCard({ note, onDelete, onTogglePin, onClick }: NoteCardProps
                     </button>
                     <button
                         onClick={handleDelete}
-                        className={`p-1.5 hover:bg-m-red hover:text-black transition-colors ${isDeleting ? 'text-m-red bg-white' : 'text-[var(--text-muted)]'}`}
+                        className={`p-1.5 hover:bg-[var(--accent-secondary)] hover:text-black transition-colors ${isDeleting ? 'text-[var(--accent-secondary)] bg-white' : 'text-[var(--text-muted)]'}`}
                         title="PURGE_RECORD"
                     >
                         {isDeleting ? <Check size={14} /> : <Trash2 size={14} />}
@@ -113,7 +113,7 @@ export function NoteCard({ note, onDelete, onTogglePin, onClick }: NoteCardProps
                     initial={{ width: '0%' }}
                     animate={{ width: '100%' }}
                     transition={{ duration: 2 }}
-                    className="absolute bottom-0 left-0 h-1 bg-m-red"
+                    className="absolute bottom-0 left-0 h-1 bg-[var(--accent-secondary)]"
                 />
             )}
         </motion.div>
